@@ -1,0 +1,44 @@
+.closed{
+	background-color: #CDCDCD;
+	position:fixed;
+	top:5%;
+	right:0;
+	width:2%;
+	height:10%;
+}
+
+.closed h4 {
+	transform:rotate(-90deg);
+	-ms-transform:rotate(-90deg); /* IE 9 */
+	-webkit-transform:rotate(-90deg); /* Safari and Chrome */
+}
+
+.open {
+	top:0;
+	width:30%;
+	height:100%;
+	overflow-x:scroll;
+}
+
+.open h4 {
+	display: none;
+}
+.toggleOpen:before {
+	content:'◄';
+	margin-left: 7px;
+}
+
+.toggleClose:before {
+	content:'►';
+}
+
+#previewPaneSTOP {
+	background-color: red;
+	position:fixed;
+	top:0;
+	right:0;
+	width:30%;
+	height:100%;
+	border-left:2px solid;
+	overflow-x:scroll;
+}

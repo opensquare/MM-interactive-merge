@@ -1,0 +1,11 @@
+<widget>
+	<type>internalPage</type>
+	<parameters>
+		<url>interactive-merge.html</url>
+		<secure>false</secure>
+	</parameters>
+	<attributes>
+		<js>interactive-merge.js</js>
+		<css>interactive-merge.css</css>
+	</attributes>
+</widget>

@@ -1,0 +1,12 @@
+<h1>Loading Job Information...</h1>
+<form rhinoforms="true">
+	<input type="submit" rf.action="next" style="display:none;"/>
+	<input type="button" rf.action="iflFields" style="display:none;"/>
+</form>
+<script>
+	rf.onFormLoad(function(){
+
+		$('[rf\\.action=next]', '.rhinoforms-merge-container').click();
+		$('[rf\\.action=iflFields]', '.rhinoforms-merge-container').click();
+	})
+</script>
