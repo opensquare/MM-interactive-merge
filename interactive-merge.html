@@ -8,10 +8,11 @@
 <script src="{widgetPath}/js/ckeditor/ckeditor.js"></script>
 
 
-<div id="previewPane" class="closed">
-	<span id="toggle" class="toggleOpen" onclick="$(this).toggleClass('toggleClose');$(this).parent().toggleClass('open'); $('.payloadData').toggle()">
-		<h4>Data</h4>
-	</span>
-</div>
+<div>
+	<div class="rhinoforms-merge-container"></div>
+	<div id="previewPane" class="closed">
+		
+			<h4>Data<span id="toggle" class="toggleOpen" onclick="$('.rhinoforms-merge-container').toggleClass('mergeOptions');$(this).toggleClass('toggleClose');$(this).parent().parent().toggleClass('open'); $('.payloadData').toggle()"/></h4>
 
-<div class="rhinoforms-merge-container" style="width:70%;"></div>
+	</div>
+</div>

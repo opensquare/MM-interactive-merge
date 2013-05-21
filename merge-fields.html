@@ -30,8 +30,14 @@
 			</script>
 		</rf.forEach>
 	</section>
-	<input type="button" value="Next" class="im-submit"/>
-	<input type="submit" rf.action="next" value="Next" style="display:none">
+	<section id="submission">
+		<div id="actions">
+			<input type="button" value="Cancel" class="im-submit"/>
+			<input type="button" value="Preview" class="im-submit"/>
+			<input type="button" value="Submit" class="im-submit"/>
+			<input type="submit" rf.action="next" value="Next" style="display:none">
+		</div>
+	</section>
 	<script>
 		rf.onFormLoad(function(){
 			

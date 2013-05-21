@@ -1,10 +1,119 @@
+body {
+	font-family: sans-serif;
+}
+
+header {
+	background: #4F81BD;
+	color: #fff;
+	padding: 1em;
+	border-top-left-radius: 0.5em;
+	border-top-right-radius: 0.5em;
+}
+
+header h1 {
+	border-bottom: 1px solid;
+	margin: 0;
+}
+
+label {
+	display: inline-block;
+	font-size: 1.2em;
+	padding: 0 1em 0 1em;
+	width: 40%;
+}
+
+select {
+	width: 20%;
+	margin-left: 0;
+	border: thin solid #0090C0;
+	font-size: 1.3em;
+	color: #AAA;
+}
+
+input[type="text"], input[type="email"], input[type="password"], input[type="number"] {
+	width: 25%;
+	padding: 0.1em 0.25em 0 0.25em;
+	border: thin solid #0090C0;
+	font-size: 1.3em;
+}
+
+input[type="checkbox"] {
+	padding: 0.45em;
+	background-color: #FFF;
+	border: thin solid #4F81BD;
+	vertical-align: middle;
+	-webkit-appearance: none;
+}
+
+input[type="checkbox"]:checked {
+	padding: 0.2em 0.4em 0.2em 0.4em;
+	background-color: #4F81BD;
+}
+
+input[type="checkbox"]:checked:after {
+	content: '✔';
+	color: #FFF;
+	background-color: #4F81BD;
+	font-size: 1.3em;
+}
+
+
+.rhinoforms-merge-container {
+	border: 2px solid #4F81BD;
+	border-radius: 15px;
+	padding: 1%;
+	margin-left: 7.5%;
+	width: 80%;
+}
+
+.mergeOptions {
+	width: 70%;
+	margin-left: 0;
+}
+
+.tName {
+	font-size: 75%;
+}
+
+#destinations {	
+	background: #C0C0C0;
+	color: #fff;
+	border-bottom-left-radius: 0.5em;
+	border-bottom-right-radius: 0.5em;
+}
+
+#destinations ul {
+	margin-left: 40%;
+	margin-top: -5%;
+	padding: 1%;
+}
+
+#destinations ul li {
+	display: inline;
+}
+
+#destinations label {
+	padding: 0 1em 0 1em;
+	display: inline;
+}
+
+#destinations h2 {
+	padding: 1%;
+	margin: 0.5%;
+}
+
+.mergeField {
+	min-height: 2.2em;
+	padding: 1em 0;
+}
+
 .closed{
-	background-color: #CDCDCD;
+	background-color: #4F81BD;
+	color: #FFF;
 	position:fixed;
-	top:5%;
+	top:0;
 	right:0;
-	width:2%;
-	height:10%;
+	height:100%;
 }
 
 .closed h4 {
@@ -15,16 +124,18 @@
 
 .open {
 	top:0;
-	width:30%;
+	width:25%;
 	height:100%;
 	overflow-x:scroll;
 }
 
 .open h4 {
-	display: none;
+	-webkit-transform:rotate(0deg);
+	margin: 0;
+	padding: 10px;
 }
 .toggleOpen:before {
-	content:'◄';
+	content:'▲';
 	margin-left: 7px;
 }
 
@@ -41,4 +152,38 @@
 	height:100%;
 	border-left:2px solid;
 	overflow-x:scroll;
+}
+
+#submission {
+	background: #C0C0C0;
+	color: #FFF;
+	border-bottom-left-radius: 0.5em;
+	border-bottom-right-radius: 0.5em;
+}
+
+.im-submit {
+	background: #4F81BD;
+	color: #fff;
+	font-family: sans-serif;
+	font-size: 1.2em;
+	border: none;
+	border-radius: 3px;
+	padding: 5px;
+	margin: 15px 5px 15px 0px;
+	right: 5px;
+}
+
+#actions {
+	clear: both;
+	text-align: right;
+	margin-right: 2%;
+}
+
+.invalid-message {
+	margin-left: 0.5em;
+	padding: 0.25em;
+	color: #FFF;
+	background: #D44;
+	border-radius: 0.25em;
+	font-weight: bold;
 }
