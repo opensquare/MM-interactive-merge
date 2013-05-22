@@ -1,0 +1,22 @@
+<form rhinoforms="true">
+	<header>
+		<h1>Interactive Merge</h1>
+	</header>
+	<section>
+		<h2>Submitting Job...</h2>
+		<input type="submit" rf.action="combinedMerge" style="display:none;"/>
+		<input type="submit" rf.action="deliveryOnly" style="display:none;"/>
+	</section>
+	<script>
+		rf.onFormLoad(function(){
+			// to correct on working preview functionality
+			setTimeout(function(){
+				if ('{{preview/jobId}}' == '') {
+					$('input[rf\\.action=combinedMerge]', '.rhinoforms-merge-container').click();
+				} else {
+					$('input[rf\\.action=deliveryOnly]', '.rhinoforms-merge-container').click();
+				}
+			}, 3000);
+		});
+	</script>
+</form>

@@ -56,7 +56,9 @@ input[type="checkbox"]:checked:after {
 	background-color: #4F81BD;
 	font-size: 1.3em;
 }
-
+section{
+	padding: 0 1em;
+}
 
 .rhinoforms-merge-container {
 	border: 2px solid #4F81BD;
@@ -65,13 +67,11 @@ input[type="checkbox"]:checked:after {
 	margin-left: 7.5%;
 	width: 80%;
 }
-
-.mergeOptions {
-	width: 70%;
+.im-container.show-preview .merge-content {
+	width: 75%;
 	margin-left: 0;
 }
-
-.tName {
+.subName {
 	font-size: 75%;
 }
 
@@ -106,54 +106,12 @@ input[type="checkbox"]:checked:after {
 	min-height: 2.2em;
 	padding: 1em 0;
 }
-
-.closed{
-	background-color: #4F81BD;
-	color: #FFF;
-	position:fixed;
-	top:0;
-	right:0;
-	height:100%;
+.searchTerms{
+	padding-bottom: 0.5em
 }
-
-.closed h4 {
-	transform:rotate(-90deg);
-	-ms-transform:rotate(-90deg); /* IE 9 */
-	-webkit-transform:rotate(-90deg); /* Safari and Chrome */
+.searchTerms input[type="text"]{
+	width: 75%;
 }
-
-.open {
-	top:0;
-	width:25%;
-	height:100%;
-	overflow-x:scroll;
-}
-
-.open h4 {
-	-webkit-transform:rotate(0deg);
-	margin: 0;
-	padding: 10px;
-}
-.toggleOpen:before {
-	content:'▲';
-	margin-left: 7px;
-}
-
-.toggleClose:before {
-	content:'►';
-}
-
-#previewPaneSTOP {
-	background-color: red;
-	position:fixed;
-	top:0;
-	right:0;
-	width:30%;
-	height:100%;
-	border-left:2px solid;
-	overflow-x:scroll;
-}
-
 #submission {
 	background: #C0C0C0;
 	color: #FFF;
@@ -186,4 +144,64 @@ input[type="checkbox"]:checked:after {
 	background: #D44;
 	border-radius: 0.25em;
 	font-weight: bold;
+}
+/* Preview Sidebar */
+.previewPane.closed{
+	background-color: #4F81BD;
+	color: #FFF;
+	position:fixed;
+	top:0;
+	right:0;
+	height:100%;
+	width:3%;
+}
+.previewPane.closed h4 {
+	margin-top: 2em;
+	cursor: pointer;
+	transform:rotate(-90deg);
+	-ms-transform:rotate(-90deg); /* IE 9 */
+	-webkit-transform:rotate(-90deg); /* Safari and Chrome */
+}
+.previewPane.closed .payloadData.active{
+	display: none;
+}
+.previewPane.open .payloadData.active{
+	display: block;
+}
+.previewPane.open {
+	top:0;
+	height:100%;
+	overflow-x:scroll;
+	width:20%;
+}
+.previewPane.open h4 {
+	cursor: pointer;
+	-webkit-transform:rotate(0deg);
+	margin: 0;
+	padding: 10px;
+}
+.previewPane .toggleOpen:before {
+	content:'▲';
+	margin-left: 7px;
+}
+
+.previewPane .toggleClose:before {
+	content:'►';
+}
+.previewPane ul, .previewPane li{
+	list-style-type: none;
+	padding-left: 0.5em;
+}
+.previewPane .previewVal{
+	text-decoration: underline;
+}
+#previewPaneSTOP {
+	background-color: red;
+	position:fixed;
+	top:0;
+	right:0;
+	width:30%;
+	height:100%;
+	border-left:2px solid;
+	overflow-x:scroll;
 }

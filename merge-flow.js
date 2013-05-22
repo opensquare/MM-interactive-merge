@@ -34,7 +34,7 @@
 								resultInsertPoint: "/merge/ifl"
 							},
 							{
-								url: "http://localhost:8080/portal-wizard-rework/echo",
+								url: "{{$appPath}}/echo",
 								method: "post",
 								data: {
 									echoData: "[dataDocument]",
@@ -52,11 +52,68 @@
 			{id: "interactiveMerge", url: "merge-fields.html", docBase: "/merge/interactive", 
 				actions:[
 					{
-						name: "next",
+						name: "reload",
 						target: "interactiveMerge"
+					},
+					{
+						name: "submit",
+						target: "previewCheck"
 					}
 				]
-			}
+			},
+			{id: "previewCheck", url: "submit-direction.html", 
+				actions: [
+					{
+						name: "combinedMerge",
+						target: "jobComplete",
+						submissions: [
+							/*{
+								url: "{{$end-point-submit}}",
+								method: "post",
+								preTransform: "",
+								data: {
+									username: "{{$username}}",
+									description: "Interactive merge of {{//jobDetails//id}} ({{//jobDetails//description}})",
+									searchTerms: "{{/merge/interactive/searchTerms}}",
+									jobType: "COMBINED",
+									payload: "[dataDocument]"
+								},
+								resultInsertPoint: "/merge/submit"
+							},*/
+							/*{
+								url: "{{$end-point-complete}}/{{//jobDetails//id}}",
+								method: "get",
+								resultInsertPoint: "/merge/complete"
+							}*/
+						]
+					},
+					{
+						name: "deliveryOnly",
+						target: "jobComplete",
+						submissions: [
+							/*{
+								url: "{{$end-point-submit}}",
+								method: "post",
+								preTransform: "",
+								data: {
+									username: "{{$username}}",
+									description: "Delivery of {{/merge/preview/jobId}} ({{//jobDetails//description}})",
+									searchTerms: "{{/merge/interactive/searchTerms}}",
+									jobType: "DELIVERY",
+									payload: "[dataDocument]"
+								},
+								resultInsertPoint: "/merge/submit"
+							},
+							{
+								url: "{{$end-point-complete}}/{{//jobDetails//id}}",
+								method: "get",
+								resultInsertPoint: "/merge/complete"
+							}*/
+						]
+					}
+				]
+			},
+			{id: "jobComplete", url: "job-complete.html"}
 		]
 	}
 }

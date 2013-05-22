@@ -3,16 +3,11 @@
 <script>
 	var CKEDITOR_BASEPATH = '{widgetPath}/js/ckeditor/';
 	var interactive_merge = new InteractiveMerge();
-	var merge_preview = new IMPreview($('#previewPane'), interactive_merge);
+	var merge_preview = new IMPreview($('.im-container'), interactive_merge);
 </script>
 <script src="{widgetPath}/js/ckeditor/ckeditor.js"></script>
 
 
-<div>
-	<div class="rhinoforms-merge-container"></div>
-	<div id="previewPane" class="closed">
-		
-			<h4>Data<span id="toggle" class="toggleOpen" onclick="$('.rhinoforms-merge-container').toggleClass('mergeOptions');$(this).toggleClass('toggleClose');$(this).parent().parent().toggleClass('open'); $('.payloadData').toggle()"/></h4>
-
-	</div>
+<div class="im-container">
+	<div class="rhinoforms-merge-container merge-content"></div>
 </div>

@@ -1,7 +1,7 @@
 <form rhinoforms="true">
 	<header>
-		<h1>Interactive Merge</h1>
-		<h2>Template Requested: <span class="tName">{{template/fileName}}</span></h2>
+		<h1>Interactive Merge - <span class="subName">{{/merge//jobDetails//description}}</span></h1>
+		<h2>Template Requested: <span class="subName">{{template/fileName}}</span></h2>
 	</header>
 	<section id="destinations">
 		<h2>Available destinations: </h2>
@@ -12,6 +12,10 @@
 				</li>
 			</rf.forEach>
 		</ul>
+		<div class="searchTerms">
+			<label for="input_searchTerms">Search Terms: </label>
+			<input type="text" name="searchTerms" id="input_searchTerms"/>
+		</div>
 	</section>
 	<section id="fields">
 		<rf.forEach select="data/record/field/*" as="f">
@@ -35,7 +39,8 @@
 			<input type="button" value="Cancel" class="im-submit"/>
 			<input type="button" value="Preview" class="im-submit"/>
 			<input type="button" value="Submit" class="im-submit"/>
-			<input type="submit" rf.action="next" value="Next" style="display:none">
+			<input type="submit" rf.action="reload" value="Next" style="display:none">
+			<input type="submit" rf.action="submit" value="Next" style="display:none">
 		</div>
 	</section>
 	<script>
@@ -51,7 +56,13 @@
 			// update rich text field rf counterparts before submitting
 			$('input[type="button"].im-submit').click(function(){
 				interactive_merge.updateRTEFields();
-				$('input[rf\\.action=next]').click();
+				merge_preview.close();
+				if ($(this).val() == 'Submit'){
+					$('input[rf\\.action=submit]').click();
+				} else {
+					$('input[rf\\.action=reload]').click();
+				}
+				
 			});
 		})
 	</script>
