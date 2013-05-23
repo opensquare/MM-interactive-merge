@@ -67,24 +67,23 @@
 						name: "combinedMerge",
 						target: "jobComplete",
 						submissions: [
-							/*{
+							{
 								url: "{{$end-point-submit}}",
 								method: "post",
-								preTransform: "",
+								preTransform: "xslt/submitJob.xsl",
 								data: {
-									username: "{{$username}}",
-									description: "Interactive merge of {{//jobDetails//id}} ({{//jobDetails//description}})",
-									searchTerms: "{{/merge/interactive/searchTerms}}",
+									username: "IM",
+									description: "xpath://merge/interactive/imDescription",
+									searchTerms: "xpath://merge/interactive/searchTerms",
 									jobType: "COMBINED",
 									payload: "[dataDocument]"
-								},
-								resultInsertPoint: "/merge/submit"
-							},*/
-							/*{
+								}
+							},
+							{
 								url: "{{$end-point-complete}}/{{//jobDetails//id}}",
 								method: "get",
 								resultInsertPoint: "/merge/complete"
-							}*/
+							}
 						]
 					},
 					{
@@ -96,13 +95,12 @@
 								method: "post",
 								preTransform: "",
 								data: {
-									username: "{{$username}}",
-									description: "Delivery of {{/merge/preview/jobId}} ({{//jobDetails//description}})",
-									searchTerms: "{{/merge/interactive/searchTerms}}",
+									username: "IM",
+									description: "xpath://merge/interactive/imDescription",
+									searchTerms: "xpath://merge/interactive/searchTerms",
 									jobType: "DELIVERY",
 									payload: "[dataDocument]"
-								},
-								resultInsertPoint: "/merge/submit"
+								}
 							},
 							{
 								url: "{{$end-point-complete}}/{{//jobDetails//id}}",

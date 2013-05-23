@@ -1,6 +1,7 @@
 <form rhinoforms="true">
 	<header>
 		<h1>Interactive Merge - <span class="subName">{{/merge//jobDetails//description}}</span></h1>
+		<input type="hidden" name="imDescription" rf.calculated="'Interactive Merge of {{/merge/jobDetails//id}} ({{/merge/jobDetails//description}})'"/>
 		<h2>Template Requested: <span class="subName">{{template/fileName}}</span></h2>
 	</header>
 	<section id="destinations">

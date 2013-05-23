@@ -48,8 +48,9 @@ function IMPreview($container, im){
 		return this;
 	}
 
-	function parsePayload(payloadXML){
+	function parsePayload(payloadXML, sub){
 		var list = $('<ul>');
+		if (sub) list.addClass('sub');
 		testDoc = payloadXML;
 		for (var i = 0; i < payloadXML.childNodes.length; i++){
 			var node =  payloadXML.childNodes[i];
@@ -59,7 +60,7 @@ function IMPreview($container, im){
 				} else {
 					var listItem = $('<li>');
 					var subName = node.getAttribute('name') != null ? ' - ' + node.getAttribute('name') : '';
-					listItem.append('<span><strong>' + node.nodeName + '</strong>:' + subName + '</span>').append(parsePayload(node));	
+					listItem.append('<span><strong>' + node.nodeName + '</strong>:' + subName + '</span>').append(parsePayload(node, true));	
 					list.append(listItem);
 				}
 				

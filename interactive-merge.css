@@ -188,12 +188,17 @@ section{
 .previewPane .toggleClose:before {
 	content:'►';
 }
+.previewPane ul.sub{
+    background-color:rgba(200,200,255,0.2)
+}
 .previewPane ul, .previewPane li{
 	list-style-type: none;
-	padding-left: 0.5em;
+	padding-left: 0;
+	margin-left:0.5em
 }
 .previewPane .previewVal{
 	text-decoration: underline;
+	cursor:pointer;
 }
 #previewPaneSTOP {
 	background-color: red;
