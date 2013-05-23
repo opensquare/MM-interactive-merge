@@ -72,7 +72,7 @@
 								method: "post",
 								preTransform: "xslt/submitJob.xsl",
 								data: {
-									username: "IM",
+									username: "xpath://merge/jobDetails//username",
 									description: "xpath://merge/interactive/imDescription",
 									searchTerms: "xpath://merge/interactive/searchTerms",
 									jobType: "COMBINED",

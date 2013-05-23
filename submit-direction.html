@@ -10,13 +10,11 @@
 	<script>
 		rf.onFormLoad(function(){
 			// to correct on working preview functionality
-			setTimeout(function(){
-				if ('{{preview/jobId}}' == '') {
+			if ('{{preview/jobId}}' == '') {
 					$('input[rf\\.action=combinedMerge]', '.rhinoforms-merge-container').click();
-				} else {
+			} else {
 					$('input[rf\\.action=deliveryOnly]', '.rhinoforms-merge-container').click();
-				}
-			}, 3000);
+			}
 		});
 	</script>
 </form>

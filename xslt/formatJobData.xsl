@@ -241,7 +241,7 @@
 			<xsl:variable name="type">
 				<xsl:choose>
 					<xsl:when test="templateField/type">
-						<xsl:value-of select="templateField/type"/>
+						<xsl:value-of select="substring-before(concat(templateField/type, '-'), '-')"/>
 					</xsl:when>
 					<xsl:otherwise>text</xsl:otherwise>
 				</xsl:choose>
@@ -263,7 +263,7 @@
 					<xsl:value-of select="templateField/mandatory = 'true'"/>
 				</xsl:attribute>
 				<xsl:attribute name="format">
-					<xsl:value-of select="templateField/format"/>
+					<xsl:value-of select="substring-after(templateField/type, '-')"/>
 				</xsl:attribute>
 				<xsl:attribute name="templateName">
 					<xsl:value-of select="templateField/name"/>
