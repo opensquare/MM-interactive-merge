@@ -81,8 +81,7 @@
 							},
 							{
 								url: "{{$end-point-complete}}/{{//jobDetails//id}}",
-								method: "get",
-								resultInsertPoint: "/merge/complete"
+								method: "get"
 							}
 						]
 					},

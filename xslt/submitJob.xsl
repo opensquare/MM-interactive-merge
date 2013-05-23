@@ -13,7 +13,9 @@
     
     <!-- IFL fields with payload equivalents -->
     <xsl:variable name="duplicateFields">
-    	<xsl:apply-templates select="/merge/interactive/data/record/field"/>
+    	<xsl:call-template name="IFLMatch">
+    		<xsl:with-param name="fields" select="/merge/interactive/data/record/field"/>
+    	</xsl:call-template>
 	</xsl:variable>
 
 	<xsl:variable name="duplicateSubrecords">
@@ -21,20 +23,25 @@
     		<subrecord>
     			<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
     			<xsl:attribute name="index"><xsl:value-of select="@index"/></xsl:attribute>
-    			<xsl:apply-templates select="field"/>
+    			<xsl:call-template name="IFLMatch">
+		    		<xsl:with-param name="fields" select="field"/>
+		    	</xsl:call-template>
     		</subrecord>
     	</xsl:for-each>
 	</xsl:variable>
 
-	<xsl:template match="field">
-		<xsl:if test="@payloadName != ''">
-    		<field>
-    			<xsl:attribute name="name">
-	    			<xsl:value-of select="@payloadName"/>
-    			</xsl:attribute>
-    			<xsl:value-of select="."/>
-    		</field>
-		</xsl:if>
+	<xsl:template name="IFLMatch">
+		<xsl:param name="fields"/>
+		<xsl:for-each select="$fields">
+			<xsl:if test="@payloadName != ''">
+	    		<field>
+	    			<xsl:attribute name="name">
+		    			<xsl:value-of select="@payloadName"/>
+	    			</xsl:attribute>
+	    			<xsl:value-of select="."/>
+	    		</field>
+			</xsl:if>
+		</xsl:for-each>
 	</xsl:template>
 	
 	<!-- IFL only fields -->
