@@ -1,4 +1,4 @@
-function Widget_interactive_merge() {
+function Widget_MM_interactive_merge() {
 
 	var _this = this;
 	
@@ -28,10 +28,6 @@ function Widget_interactive_merge() {
 		var valid;
 		str = str.substr(1);
 
-		var url =  "http://api.twitter.com/1/statuses/user_timeline/codinghorror.json";
-	    $.getJSON(url + "?callback=?", null, function(tweets) {
-	       alert(tweets)
-	    });
 	    /*
 		$.getJSON(url + str + "?callback=?", null, function(tweets) {
 	       alert(tweets)
@@ -69,7 +65,7 @@ function Widget_interactive_merge() {
 
 	function loadMergeFlow(id, $container){
 		var initialData = '<merge><jobId>' + id + '</jobId></merge>';
-		var flow = 'widgets/interactive-merge/merge-flow.js';
+		var flow = 'widgets/MM-interactive-merge/merge-flow.js';
 		rf.loadFlow(flow, $container, initialData);
 	}
 
