@@ -21,6 +21,7 @@
 					{
 						name: "next",
 						target: "interactiveMerge",
+						dataDocTransform: "xslt/formatJobData.xsl",
 						submissions: [
 							{
 								url: "{{$end-point-jobs}}/{{//merge/jobId}}/payload",
@@ -32,16 +33,6 @@
 								url: "{{$end-point-templates}}/{{//mmJob//template/fileName}}/fieldsXML",
 								method: "get",
 								resultInsertPoint: "/merge/ifl"
-							},
-							{
-								url: "{{$appPath}}/echo",
-								method: "post",
-								data: {
-									echoData: "[dataDocument]",
-									paramToEcho: "echoData"
-								},
-								postTransform: "xslt/formatJobData.xsl",
-								resultInsertPoint: "/"
 							}
 						]
 					}
