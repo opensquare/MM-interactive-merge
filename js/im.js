@@ -18,6 +18,11 @@ function InteractiveMerge(){
 		],
 		rtEditors = [];
 	}
+
+	this.onReady = function(){
+		// initialise CKEditor RTE for each IM textarea field
+		this.loadRTEs();
+	}
 	
 	this.createControl = function($container, fieldData){
 

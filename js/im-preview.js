@@ -16,7 +16,12 @@ function IMPreview($container, im){
 		$mainContainer.append($paneTemplate);
 		$previewPane = $('.previewPane', $mainContainer);
 	}
-
+	this.loadPayloadData = function(flowId){
+		var _this = this;
+		$.get('rhinoforms/data-document/' + flowId, function(data){
+			_this.showPayloadData(data.childNodes[0].getElementsByTagName('mmJob')[0]);
+		})
+	}
 	this.showPayloadData = function(payloadXML){
 		this.close();
 		payload = parsePayload(payloadXML.getElementsByTagName('data')[0]);

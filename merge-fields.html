@@ -18,41 +18,38 @@
 			<input type="text" name="searchTerms" id="input_searchTerms"/>
 		</div>
 	</section>
-	<section id="fields">
-		<rf.forEach select="data/record/field/*" as="f">
-			<div class="mergeField" id="fw_{{f.name()}}">
-				<input type="hidden" name="data.record.field.{{f.name()}}" 
-					   rf.validationFunction="validateMergeField(this, '{{f.parent::field.@mandatory}}', '{{f.parent::field.@type}}')"/>
-			</div>
-			<script>
-				interactive_merge.createControl($("#fw_{{f.name()}}"),{
-					name: 'data.record.field.{{f.name()}}.im',
-					label: '{{f.parent::field.@label}}',
-					type: '{{f.parent::field.@type}}',
-					mandatory: '{{f.parent::field.@mandatory}}',
-					value: '{{f}}'
-				});
-			</script>
-		</rf.forEach>
+	<section id="fieldsWrapper">
+		<div class="fields-container">
+			<rf.forEach select="data/record/field/*" as="f">
+				<div class="mergeField" id="fw_{{f.name()}}">
+					<input type="hidden" name="data.record.field.{{f.name()}}" 
+						   rf.validationFunction="validateMergeField(this, '{{f.parent::field.@mandatory}}', '{{f.parent::field.@type}}')"/>
+				</div>
+				<script>
+					interactive_merge.createControl($("#fw_{{f.name()}}"),{
+						name: 'data.record.field.{{f.name()}}.im',
+						label: '{{f.parent::field.@label}}',
+						type: '{{f.parent::field.@type}}',
+						mandatory: '{{f.parent::field.@mandatory}}',
+						value: '{{f}}'
+					});
+				</script>
+			</rf.forEach>
+		</div>
 	</section>
-	<section id="submission">
+	<footer id="submission">
 		<div id="actions">
 			<input type="button" value="Cancel" class="im-submit"/>
-			<input type="button" value="Preview" class="im-submit"/>
+			<input type="button" value="Preview" class="im-submit" rf.includeIf="'{{$allow-preview}}' === 'true'"/>
 			<input type="button" value="Submit" class="im-submit"/>
 			<input type="submit" rf.action="reload" value="Next" style="display:none">
 			<input type="submit" rf.action="submit" value="Next" style="display:none">
 		</div>
-	</section>
+	</footer>
 	<script>
 		rf.onFormLoad(function(){
-			
-			$.get('rhinoforms/data-document/{{rf.flowId}}', function(data){
-				merge_preview.showPayloadData(data.childNodes[0].getElementsByTagName('mmJob')[0]);
-			})
-			
-			// initialise CKEditor RTE for each IM textarea field
-			interactive_merge.loadRTEs();
+			merge_preview.loadPayloadData('{{rf.flowId}}');
+			interactive_merge.onReady();
 
 			// update rich text field rf counterparts before submitting
 			$('input[type="button"].im-submit').click(function(){

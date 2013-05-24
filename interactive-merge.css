@@ -14,6 +14,9 @@ header h1 {
 	border-bottom: 1px solid;
 	margin: 0;
 }
+header h2{
+	margin: 0.5em 0 0;
+}
 
 label {
 	display: inline-block;
@@ -146,6 +149,17 @@ section{
 	font-weight: bold;
 }
 /* Preview Sidebar */
+.previewPane::-webkit-scrollbar {
+    width:12px;;
+    height:12px
+}
+.previewPane::-webkit-scrollbar-corner{
+    background-color:#4F81BB;
+}
+.previewPane::-webkit-scrollbar-thumb{
+    border-radius:8px;
+    background-color:#CCF;
+}
 .previewPane.closed{
 	background-color: #4F81BD;
 	color: #FFF;
