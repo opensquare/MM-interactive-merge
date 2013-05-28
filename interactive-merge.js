@@ -7,7 +7,7 @@ function Widget_MM_interactive_merge() {
 		<p>A valid job ID has not been specified</p>';
 	
 	this.onReadyExtend = function(){
-		var hashtag = window.location.hash;
+		/*var hashtag = window.location.hash;
 		console.debug('hashtag: ' + hashtag);
 		if (isValidId(hashtag)) {
 			hashtag = hashtag.substr(1);
@@ -15,7 +15,7 @@ function Widget_MM_interactive_merge() {
 			initIM(hashtag, container);
 		} else {
 			this.setContent(invalidJobMessage);
-		}
+		}*/
 	}
 	
 	function isValidId(str){
@@ -23,41 +23,6 @@ function Widget_MM_interactive_merge() {
 		return str.length > 1 && pattern.test(str);
 	}
 
-	function isValidJobStatus(str){
-		var url = _this.$widgetDiv.attr('jobsurl');
-		var valid;
-		str = str.substr(1);
-
-	    /*
-		$.getJSON(url + str + "?callback=?", null, function(tweets) {
-	       alert(tweets)
-	    });
-
-		/*$.ajax({
-		     url:url + str,
-		     dataType: 'jsonp', 
-		     jsonpCallback: 'isValidJsonParser',
-        	 jsonp: 'callback',
-		     success:function(json){
-		      log.debug(json)
-		     },
-		     error:function(){
-		         alert("Error");
-		     },
-		});
-
-		/*$.get(url + str, function(data){
-			console.debug(data);
-			//valid = data.jobType == "INTERACTIVE" && (typeOf data.interactiveCompleted == "Undefined");
-
-		});*/
-		return valid;
-	}
-
-	function isValidJsonParser(data){
-		 log.debug(data)
-
-	}
 	
 	function initIM(id, $container){
 		loadMergeFlow(id, $container);

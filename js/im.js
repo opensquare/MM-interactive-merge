@@ -1,10 +1,17 @@
-function InteractiveMerge(){
+function InteractiveMerge(IMcontainer, flow){
 	
 	var controls,
 	rtEditors,
 	lastActiveInput;
 
 	var rteManager = new RTEManager();
+
+	var invalidJobMessage = '<h2>Unable to initialise Interactive Merge</h2>\n\
+		<p>A valid job ID has not been specified</p>';
+
+	var flow = flow;
+	var flowLoaded = false;
+	var imContainer = $(IMcontainer);
 
 	this.init = function(){
 		controls = [
@@ -17,6 +24,18 @@ function InteractiveMerge(){
 			"file",
 		],
 		rtEditors = [];
+
+		if (!flowLoaded){
+			var hashtag = window.location.hash;
+			console.debug('hashtag: ' + hashtag);
+			if (isValidId(hashtag)) {
+				hashtag = hashtag.substr(1);
+				loadMergeFlow(hashtag, imContainer);
+			} else {
+				imContainer.html(invalidJobMessage);
+			}
+			flowLoaded = true;
+		}
 	}
 
 	this.onReady = function(){
@@ -58,6 +77,15 @@ function InteractiveMerge(){
 	}
 
 	// private methods 
+	function isValidId(str){
+		var pattern = /^#[0-9]+$/g;
+		return str.length > 1 && pattern.test(str);
+	}
+
+	function loadMergeFlow(id, $container){
+		var initialData = '<merge><jobId>' + id + '</jobId></merge>';
+		rf.loadFlow(flow, $container, initialData);
+	}
 
 	var verifyFieldData = function(fieldData, $container){
 		var field = {};
