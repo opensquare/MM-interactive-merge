@@ -128,6 +128,9 @@ function InteractiveMerge(IMcontainer, flow){
 				case "number":
 					return new numberControl(field);
 					break;
+				case "dateTime":
+					return new dateTimeControl(field);
+					break;
 				case "richText":
 					return new richTextControl(field);
 					break;
@@ -146,7 +149,7 @@ function InteractiveMerge(IMcontainer, flow){
 		}
 	}
 
-	var createSimpleInput = function(field, type, rfValidationKeyword){
+	var createSimpleInput = function(field, type, rfValidationKeyword, skipInputBind){
 		// construct input
 		var $input = $('<input type="' + type + '">').attr('name', field.name).attr('id',field.id).val(field.value);
 		
@@ -162,10 +165,12 @@ function InteractiveMerge(IMcontainer, flow){
 		$input.attr("rf.validation", rfValidationString);
 
 		// bind change to equivalent rhinoforms hidden field
-		$input.change(function(){
-			var rfName = field.name.replace('.im', '');
-			$('input[name="'+ rfName + '"]').val($(this).val());
-		});
+		if (!skipInputBind){
+			$input.change(function(){
+				var rfName = field.name.replace('.im', '');
+				$('input[name="'+ rfName + '"]').val($(this).val());
+			});
+		}
 		$input.focus(function(){
 			lastActiveInput = $(this);
 		})
@@ -218,6 +223,34 @@ function InteractiveMerge(IMcontainer, flow){
 		return [$label, $input];
 	}
 
+	var dateTimeControl = function(field){
+		// get date and time values as array
+		var val = parseDateTimeValue(field.value);
+
+		// clone field object for date and time inputs
+		var dateField = $.extend({}, {}, field);
+		dateField.name += '-date';
+		dateField.id += '-date';
+		dateField.value = val[0];
+		var timeField = $.extend({}, {}, field);
+		timeField.name += '-time';
+		timeField.id += '-time';
+		timeField.value = val[1];
+
+		// create controls
+		var $label = createLabel(field.label, field.id);
+		
+		var $dateInput = createSimpleInput(dateField, "date", "date({format:'YYYY-MM-DD'})", true);
+		var $timeInput = createSimpleInput(timeField, "text", "date({format:'HH:mm:ss'})", true).addClass('time');
+		var callback = function(){
+			var rfName = field.name.replace('.im', '');
+			$('input[name="'+ rfName + '"]').val($dateInput.val() + 'T' + $timeInput.val());
+		}
+		$dateInput.change(callback);
+		$timeInput.change(callback);
+		return [$label, $dateInput, $timeInput];
+	}
+
 	var richTextControl = function(field){
 		var $label = createLabel(field.label, field.id);
 		var $textarea = $('<textarea></textarea>').attr('name', field.name).attr('id', field.id).val(field.value);
@@ -234,6 +267,34 @@ function InteractiveMerge(IMcontainer, flow){
 		rtEditors.push(field);
 
 		return [$label, $textarea];
+	}
+
+	function parseDateTimeValue(value){
+		var dateTimeVal = parseDate(value);
+		var dateVal = '';
+		var timeVal = '';
+		if (dateTimeVal != ''){
+			dateVal = dateTimeVal.format('YYYY-MM-DD');
+			timeVal = dateTimeVal.format('HH:mm:ss');
+		}
+		return [dateVal, timeVal];
+	}
+
+	function parseDate(value){
+		var ISOpattern = /\d\d\d\d-[0-1]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d/g;
+		var defaultDateTimePattern = /[0-3]\d\/[0-1]\d\/\d\d\d\d\w[0-2]\d:[0-5]\d:[0-5]\d/g;
+		var defaultDatePattern = /[0-3]\d\/[0-1]\d\/\d\d\d\d/g;
+		if (value.match(ISOpattern)){
+			return new moment(value, 'YYYY-MM-DDTHH:mm:ss');
+		}
+		if (value.match(defaultDateTimePattern)){
+			return new moment(value, 'DD/MM/YYYY HH:mm:ss');
+		}
+		if (value.match(defaultDatePattern)){
+			return new moment(value, 'DD/MM/YYYY');
+		}
+		// no matches, don't use payload value
+		return '';
 	}
 
 	function RTEManager(){
@@ -273,5 +334,8 @@ function validateMergeField(field, mandatory, type){
 	}
 	if (type == 'number'){
 		field.validate("pattern({regex:'^[0-9\\.]+$'})");
+	}
+	if (type == 'dateTime'){
+		field.validate("pattern({regex:'^[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$'})");
 	}
 }
