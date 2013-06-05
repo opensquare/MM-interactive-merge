@@ -11,7 +11,7 @@
 <script>
 	rf.onFormLoad(function(){
 		// if jobStatus is interactive and interactiveCompleted is not defined then proceed to load job
-		if ("{{jobType}}" === "INTERACTIVE" && "{{interactiveCompleted}}" === "null") {
+		if ("{{jobType}}" === "INTERACTIVE" && "{{interactiveCompleted}}" === "null" && "{{status}}" !== "DELETED") {
 			$('[rf\\.action=next]', '.rhinoforms-merge-container').click();
 		}else{
 			// otherwise stop here and display error message

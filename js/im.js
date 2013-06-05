@@ -248,6 +248,8 @@ function InteractiveMerge(IMcontainer, flow){
 		}
 		$dateInput.change(callback);
 		$timeInput.change(callback);
+		// trigger a set value in case format is orignally incorrect
+		$dateInput.change();
 		return [$label, $dateInput, $timeInput];
 	}
 

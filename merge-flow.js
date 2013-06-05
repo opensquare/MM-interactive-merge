@@ -33,6 +33,16 @@
 								url: "{{$end-point-templates}}/{{//mmJob//template/fileName}}/fieldsXML",
 								method: "get",
 								resultInsertPoint: "/merge/ifl"
+							},
+							{
+								url: "http://localhost:8080{{$contextPath}}/echo",
+								method: "post",
+								data: {
+									echoData: "[dataDocument]",
+									paramToEcho: "echoData"
+								},
+								postTransform: "xslt/formatJobData.xsl",
+								resultInsertPoint: "/"
 							}
 						]
 					}
@@ -45,6 +55,22 @@
 					{
 						name: "reload",
 						target: "interactiveMerge"
+					},
+					{
+						name: "preview",
+						target: "interactiveMerge"/*,
+						submission: {
+							url: "{{$end-point-submit}}",
+							method: "post",
+							preTransform: "xslt/submitJob.xsl",
+							data: {
+								username: "xpath://merge/jobDetails//username",
+								description: "xpath://merge/interactive/imDescription",
+								searchTerms: "xpath://merge/interactive/searchTerms",
+								jobType: "MERGE",
+								payload: "[dataDocument]"
+							}
+						}*/
 					},
 					{
 						name: "submit",

@@ -27,7 +27,7 @@
 		</xsl:for-each>
 	</xsl:variable>
 	<xsl:variable name="payloadFields">
-		<xsl:copy-of select="/merge/payload//data/record/*"/>
+		<xsl:copy-of select="/merge/payload//data/record[1]/*"/>
 	</xsl:variable>
 	<xsl:variable name="combinedFields">
 		<xsl:apply-templates select="$templateFields/templateField"/>

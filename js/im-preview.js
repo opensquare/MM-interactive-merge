@@ -1,56 +1,127 @@
 function IMPreview($container, im){
 	var imInstance = im;
 	var payload;
-	var payloadTemplate = '<div class="payloadData" />'
 	var payloadHeader = '';
 	var $mainContainer = $container;
 	var $previewPane;
-	var paneTemplate = '<div class="previewPane closed"><h4 class="previewTab">Data<span id="toggle" class="toggleOpen"/></h4></div>';
-
+	var _this = this;
+	var tabs = {
+		'payload' : {
+			'text': 'Data',
+			'group' : 'payload'
+		},
+		'preview' : {
+			'text' : 'Merge Preview',
+			'group' : 'merge'
+		}
+	}
+	
 	this.init = function(){
-		var $paneTemplate = $(paneTemplate);
-		var _this = this;
-		$('.previewTab', $paneTemplate).click(function(){
-			_this.toggle();
-		});
+		var $paneTemplate = $('<div class="previewPane closed"><div class="tabs"></div><div class="contents"></div></div>');
 		$mainContainer.append($paneTemplate);
 		$previewPane = $('.previewPane', $mainContainer);
 	}
-	this.loadPayloadData = function(flowId){
-		var _this = this;
-		$.get('rhinoforms/data-document/' + flowId, function(data){
-			_this.showPayloadData(data.childNodes[0].getElementsByTagName('mmJob')[0]);
-		})
+	this.onReady = function(flowId, jobId, previewRequested){
+		reloadTabs(previewRequested);
+		this.loadPayloadData(flowId);
+		if (previewRequested === 'true') {
+			addTab(tabs.preview);
+			this.showMergePreview();
+		}
 	}
-	this.showPayloadData = function(payloadXML){
-		this.close();
+	function reloadTabs(){
+		$previewPane.find('.tabs').empty();
+		$previewPane.find('.contents').empty();
+		addTab(tabs.payload);
+	}
+	
+	function addTab(tab){
+		var $tabTemplate = $('<div class="tabContainer"><h4 class="previewTab"><span class="tabText"></span><span class="toggle toggleOpen"/></h4></div>');
+		$tabTemplate.data('group', tab.group);
+		$tabTemplate.find('.tabText').text(tab.text);
+		$tabTemplate.click(function(){
+			_this.toggle(this);
+		});
+		var $content = $('<div class="previewContent"></div>').data('group', tab.group);
+		$previewPane.find('.tabs').append($tabTemplate);
+		$previewPane.find('.contents').append($content);
+	}
+
+	this.loadPayloadData = function(flowId){
+		$.get('rhinoforms/data-document/' + flowId, function(data){
+			_this.insertPayloadData(data.childNodes[0].getElementsByTagName('mmJob')[0]);
+		});
+	}
+	this.insertPayloadData = function(payloadXML){
 		payload = parsePayload(payloadXML.getElementsByTagName('data')[0]);
-		$payloadContent = $(payloadTemplate).append(payloadHeader).append(payload).addClass('active');
-		$previewPane.find('.payloadData').remove();
-		$previewPane.append($payloadContent);
+		$payloadContent = $('<div class="payloadData"></div>').append(payloadHeader).append(payload);
+		var $tabContent = findContent(tabs.payload.group, '.contents .previewContent');
+		$tabContent.find('.payloadData').remove();
+		$tabContent.append($payloadContent);
+	}
+
+	this.showMergePreview = function(){
+		findContent(tabs.preview.group, '.tabContainer').click();
 	}
 
 	this.close = function(){
 		$previewPane.removeClass('open');
-		$('.previewTab span', $previewPane).removeClass('toggleClose');
+		$('.previewTab .toggle', $previewPane).removeClass('toggleClose');
+		$('.tabContainer.active, ', $previewPane).removeClass('active');
+		$('.contents .previewContent.active, ', $previewPane).removeClass('active');
 		$mainContainer.removeClass('show-preview');
 		return this;
 	}
 
 	this.open = function(){
 		$previewPane.addClass('open');
-		$('.previewTab span', $previewPane).addClass('toggleClose');
+		$('.previewTab .toggle', $previewPane).addClass('toggleClose');
 		$mainContainer.addClass('show-preview');
 		return this;
 	}
 
-	this.toggle = function(){
+	this.toggle = function(tabContainer){
+		for (var tab in tabs) {
+			$previewPane.removeClass(tabs[tab].group);
+		}
 		if($previewPane.hasClass('open')){
-			this.close();
-		} else {	
+			if (tabContainer && !$(tabContainer).hasClass('active')){
+				switchTab(tabContainer, tabs);
+			} else {
+				this.close();
+			}
+		} else {
+			if(tabContainer){
+				switchTab(tabContainer,tabs);
+
+			}
 			this.open();
 		}
 		return this;
+	}
+
+	function switchTab(tabContainer, tabs){
+		out(tabs);
+		var tabGroup = $(tabContainer).data('group');
+		$('.tabContainer.active, ', $previewPane).removeClass('active');
+		$('.contents .previewContent.active, ', $previewPane).removeClass('active');
+		findContent(tabGroup,'.contents .previewContent').addClass('active');
+		findContent(tabGroup,'.tabContainer').addClass('active');
+		$previewPane.addClass(tabGroup);
+
+	}
+
+	function findContent(group, selector){
+		var $contents = $previewPane.find(selector);
+		var group = group;
+		var content = $();
+		$contents.each(function(){
+			if ($(this).data('group') === group){
+				content = $(this);
+				return;
+			}
+		});
+		return content;
 	}
 
 	function parsePayload(payloadXML, sub){
@@ -95,6 +166,10 @@ function IMPreview($container, im){
 			});
 			return updateLink;
 		}
+	}
+
+	function out(s){
+		console.debug(s);
 	}
 
 	this.init();

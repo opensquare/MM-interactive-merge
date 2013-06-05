@@ -178,15 +178,19 @@ section{
 }
 .previewPane.closed h4 {
 	margin-top: 2em;
+	margin-bottom: 4em;
 	cursor: pointer;
 	transform:rotate(-90deg);
 	-ms-transform:rotate(-90deg); /* IE 9 */
 	-webkit-transform:rotate(-90deg); /* Safari and Chrome */
 }
-.previewPane.closed .payloadData.active{
+.previewPane.open .tabContainer.active h4{
+	 background-color:rgba(200,200,255,0.2)
+}
+.previewPane.closed .previewContent{
 	display: none;
 }
-.previewPane.open .payloadData.active{
+.previewPane.open .previewContent.active{
 	display: block;
 }
 .previewPane.open {
@@ -194,6 +198,10 @@ section{
 	height:100%;
 	overflow-x:scroll;
 	width:20%;
+}
+.previewPane.open.merge{
+	position:fixed;
+	width:60%;
 }
 .previewPane.open h4 {
 	cursor: pointer;

@@ -43,24 +43,35 @@
 			<input type="button" value="Preview" class="im-submit" rf.includeIf="'{{$allow-preview}}' === 'true'"/>
 			<input type="button" value="Submit" class="im-submit"/>
 			<input type="submit" rf.action="reload" value="Next" style="display:none">
+			<input type="submit" rf.action="preview" value="Next" style="display:none">
 			<input type="submit" rf.action="submit" value="Next" style="display:none">
 		</div>
+		<input type="hidden" name="previewRequested" id="input_prevReq"/>
 	</footer>
 	<script>
 		rf.onFormLoad(function(){
-			merge_preview.loadPayloadData('{{rf.flowId}}');
+			merge_preview.onReady('{{$rf.flowId}}', {{/merge/jobDetails//id}}, '{{previewRequested}}');
 			interactive_merge.onReady();
 
 			// update rich text field rf counterparts before submitting
 			$('input[type="button"].im-submit').click(function(){
 				interactive_merge.updateRTEFields();
 				merge_preview.close();
-				if ($(this).val() == 'Submit'){
-					$('input[rf\\.action=submit]').click();
-				} else {
-					$('input[rf\\.action=reload]').click();
+				switch ($(this).val()) {
+					case 'Submit':
+						$('input[rf\\.action=submit]').click();
+						console.debug('Submitting request');
+						break;
+					case 'Preview':
+						$('#input_prevReq').val('true');
+						$('input[rf\\.action=preview]').click();
+						console.debug('Previewing request');
+						break;
+					default:
+						$('input[rf\\.action=reload]').click();
+						console.debug('Reloading page');
+						break;
 				}
-				
 			});
 		})
 	</script>
