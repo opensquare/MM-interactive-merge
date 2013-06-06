@@ -1,10 +1,10 @@
-function InteractiveMerge(IMcontainer, flow){
+function InteractiveMerge(IMcontainer, flow, RTEConfig){
 	
 	var controls,
 	rtEditors,
 	lastActiveInput;
 
-	var rteManager = new RTEManager();
+	var rteManager = new RTEManager(RTEConfig);
 
 	var invalidJobMessage = '<h2>Unable to initialise Interactive Merge</h2>\n\
 		<p>A valid job ID has not been specified</p>';
@@ -52,6 +52,9 @@ function InteractiveMerge(IMcontainer, flow){
 			var controlParts = controlBuilder().build(field);
 			for (var i = 0; i<= controlParts.length; i++){
 				$container.append(controlParts[i]);
+			}
+			if (field.mandatory){
+				$container.addClass('im-required');
 			}
 		}
 	}
@@ -299,15 +302,23 @@ function InteractiveMerge(IMcontainer, flow){
 		return '';
 	}
 
-	function RTEManager(){
+	function RTEManager(configLocation){
 		// keep RTE implementation separate
+		this.configLocation = configLocation;
 
 		this.getRTEName = function(IMFieldId) {
 			return IMFieldId.replace('.', '_');
 		}
 
 		this.loadRTE = function(fieldName) {
-			var editor = CKEDITOR.replace(fieldName);
+			var editor;
+			if (this.configLocation != ''){
+				editor = CKEDITOR.replace(fieldName, {
+					customConfig : this.configLocation
+				});
+			} else {
+				editor = CKEDITOR.replace(fieldName);
+			}
 			editor.on('focus', function(e){
 				lastActiveInput = null;
 			})

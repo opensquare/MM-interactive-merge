@@ -29,7 +29,8 @@
 		<script type='text/javascript'>
 			var rf = new Rhinoforms();
 			var CKEDITOR_BASEPATH = 'forms/MM-interactive-merge/js/ckeditor/';
-			var interactive_merge = new InteractiveMerge('.rhinoforms-merge-container','forms/MM-interactive-merge/merge-flow.js');
+			// ckeditor config file is relative to CKEDITOR_BASEPATH
+			var interactive_merge = new InteractiveMerge('.rhinoforms-merge-container','forms/MM-interactive-merge/merge-flow.js', '../cke_config.js');
 			var merge_preview = new IMPreview($('.im-container'), interactive_merge);
 
 		</script>

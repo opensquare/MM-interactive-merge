@@ -114,6 +114,9 @@ section{
 	min-height: 2.2em;
 	padding: 1em 0;
 }
+.mergeField.im-required label[for]:after{
+	content: '*';
+}
 .searchTerms{
 	padding-bottom: 0.5em
 }
