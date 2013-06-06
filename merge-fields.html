@@ -1,19 +1,21 @@
 <form rhinoforms="true">
 	<header>
-		<h1>Interactive Merge - <span class="subName">{{/merge//jobDetails//description}}</span></h1>
+		<h1 title="template - {{template/fileName}}">Interactive Merge - <span class="subName">{{/merge//jobDetails//description}}</span></h1>
 		<input type="hidden" name="imDescription" rf.calculated="'Interactive Merge of {{/merge/jobDetails//id}} ({{/merge/jobDetails//description}})'"/>
-		<h2>Template Requested: <span class="subName">{{template/fileName}}</span></h2>
+		<h2 rf.includeIf="'{{$show-template}}' === 'true'">Template Requested: <span class="subName">{{template/fileName}}</span></h2>
 	</header>
-	<section id="destinations">
-		<h2>Available destinations: </h2>
-		<ul>
-			<rf.forEach select="destinations/destination" as="d">
-				<li>
-					<input type="checkbox" name="selectedDestinations.{{d.@name}}" value="true"><label>{{d.@name}}</label>
-				</li>
-			</rf.forEach>
-		</ul>
-		<div class="searchTerms">
+	<section id="destinations" rf.includeIf="'{{$show-destinations}}' === 'true' || '{{$show-search-terms}}' === 'true'">
+		<div rf.includeIf="'{{$show-destinations}}' === 'true'">
+			<h2>Destinations: </h2>
+			<ul>
+				<rf.forEach select="destinations/destination" as="d">
+					<li>
+						<h3>{{d.@name}}</h3>
+					</li>
+				</rf.forEach>
+			</ul>
+		</div>
+		<div class="searchTerms" rf.includeIf="'{{$show-search-terms}}' === 'true'">
 			<label for="input_searchTerms">Search Terms: </label>
 			<input type="text" name="searchTerms" id="input_searchTerms"/>
 		</div>
@@ -47,10 +49,11 @@
 			<input type="submit" rf.action="submit" value="Next" style="display:none">
 		</div>
 		<input type="hidden" name="previewRequested" id="input_prevReq"/>
+		<input type="hidden" rf.source="{{$end-point-jobs}}/{{/merge/jobDetails//id}}" id="jobsProxy">
 	</footer>
 	<script>
 		rf.onFormLoad(function(){
-			merge_preview.onReady('{{$rf.flowId}}', {{/merge/jobDetails//id}}, '{{previewRequested}}');
+			merge_preview.onReady('{{$rf.flowId}}', {{/merge/jobDetails//id}},'{{previewRequested}}');
 			interactive_merge.onReady();
 
 			// update rich text field rf counterparts before submitting
@@ -64,7 +67,9 @@
 						break;
 					case 'Preview':
 						$('#input_prevReq').val('true');
-						$('input[rf\\.action=preview]').click();
+						if ('{{$allow-preview}}' === 'true'){
+							$('input[rf\\.action=preview]').click();
+						}
 						console.debug('Previewing request');
 						break;
 					default:

@@ -69,6 +69,9 @@ input[type="checkbox"]:checked:after {
 section{
 	padding: 0 1em;
 }
+.rf-included-false{
+	display: none!important;
+}
 
 .rhinoforms-merge-container {
 	border: 2px solid #4F81BD;
@@ -93,13 +96,8 @@ section{
 }
 
 #destinations ul {
-	margin-left: 40%;
-	margin-top: -5%;
-	padding: 1%;
-}
-
-#destinations ul li {
-	display: inline;
+	margin: 0;
+	padding: 0 5% 0.1% 5%;
 }
 
 #destinations label {
@@ -108,7 +106,7 @@ section{
 }
 
 #destinations h2 {
-	padding: 1%;
+	padding: 1% 0 0 1%;
 	margin: 0.5%;
 }
 
