@@ -42,9 +42,7 @@
 			<xsl:copy-of select="/merge/jobDetails"/>
 			<interactive>
 				<xsl:copy-of select="/merge/payload//template"/>
-				<destinations>
-					<xsl:apply-templates select="/merge/payload//destinations"/>
-				</destinations>
+				<xsl:apply-templates select="/merge/payload//destinations"/>
 				<data>
 					<record>
 						<xsl:apply-templates select="$combinedFields/mergeField|$payloadOnlyFields/mergeField"/>
@@ -64,19 +62,23 @@
 	</xsl:template>
 
 	<xsl:template match="destinations">
-		<destination>
-			<xsl:attribute name="name">
-				<xsl:value-of select="*/name()"/>
-			</xsl:attribute>
+		<destinations>
 			<xsl:for-each select="*">
-				<xsl:element name="parameter">
+				<destination>
 					<xsl:attribute name="name">
-						<xsl:value-of select="*/name()"/>
+						<xsl:value-of select="name()"/>
 					</xsl:attribute>
-					<xsl:value-of select="*"/>
-				</xsl:element>
+					<xsl:for-each select="*">
+						<xsl:element name="parameter">
+							<xsl:attribute name="name">
+								<xsl:value-of select="name()"/>
+							</xsl:attribute>
+							<xsl:value-of select="."/>
+						</xsl:element>
+					</xsl:for-each>
+				</destination>
 			</xsl:for-each>
-		</destination>
+		</destinations>
 	</xsl:template>
 
 	<xsl:template name="collectTemplateFields">
@@ -272,9 +274,33 @@
 					<xsl:value-of select="payloadField/@name"/>
 				</xsl:attribute>
 				<xsl:element name="{replace($name, '[:\.]', '-')}">
-					<xsl:value-of select="payloadField"/>
+					<xsl:call-template name="replace">
+						<xsl:with-param name="string" select="payloadField"/>
+						<xsl:with-param name="search" select='"&apos;"'/>
+						<xsl:with-param name="replace" select='"\&apos;"'/>
+					</xsl:call-template>
 				</xsl:element>
 			</field>
 		</xsl:if>
+	</xsl:template>
+
+	<xsl:template name="replace">
+		<xsl:param name="string"/>
+		<xsl:param name="search"/>
+		<xsl:param name="replace"/>
+		<xsl:choose>
+			<xsl:when test="contains($string, $search)">
+				<xsl:value-of select="substring-before($string, $search)"/>
+				<xsl:value-of select="$replace"/>
+				<xsl:call-template name="replace">
+					<xsl:with-param name="string" select="substring-after($string, $search)"/>
+					<xsl:with-param name="search" select="$search"/>
+					<xsl:with-param name="replace" select="$replace"/>
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$string"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>

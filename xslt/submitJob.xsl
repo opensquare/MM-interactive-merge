@@ -4,11 +4,11 @@
     
     <!-- Payload -->
     <xsl:variable name="payloadFields">
-		<xsl:copy-of select="/merge/payload/mmJob/data/record/*[name()='field']"/>
+		<xsl:copy-of select="/merge/payload/mmJob/data/record[1]/*[name()='field']"/>
 	</xsl:variable>
 
     <xsl:variable name="payloadSubrecords">
-		<xsl:copy-of select="/merge/payload/mmJob/data/record/*[name()='subrecord']"/>
+		<xsl:copy-of select="/merge/payload/mmJob/data/record[1]/*[name()='subrecord']"/>
 	</xsl:variable>
     
     <!-- IFL fields with payload equivalents -->
@@ -38,7 +38,11 @@
 	    			<xsl:attribute name="name">
 		    			<xsl:value-of select="@payloadName"/>
 	    			</xsl:attribute>
-	    			<xsl:value-of select="."/>
+	    			<xsl:call-template name="replace">
+    					<xsl:with-param name="string" select="."/>
+						<xsl:with-param name="replace" select='"&apos;"'/>
+						<xsl:with-param name="search" select='"\&apos;"'/>
+	    			</xsl:call-template>
 	    		</field>
 			</xsl:if>
 		</xsl:for-each>
@@ -74,7 +78,11 @@
     			<xsl:attribute name="name">
 	    			<xsl:value-of select="$field/@templateName"/>
     			</xsl:attribute>
-    			<xsl:value-of select="$field"/>
+    			<xsl:call-template name="replace">
+					<xsl:with-param name="string" select="$field"/>
+					<xsl:with-param name="replace" select='"&apos;"'/>
+					<xsl:with-param name="search" select='"\&apos;"'/>
+    			</xsl:call-template>
     		</field>
 		</xsl:if>
 	</xsl:template>
@@ -162,4 +170,24 @@
     		<xsl:apply-templates/>
     	</xsl:element>
     </xsl:template>
+
+    <xsl:template name="replace">
+		<xsl:param name="string"/>
+		<xsl:param name="search"/>
+		<xsl:param name="replace"/>
+		<xsl:choose>
+			<xsl:when test="contains($string, $search)">
+				<xsl:value-of select="substring-before($string, $search)"/>
+				<xsl:value-of select="$replace"/>
+				<xsl:call-template name="replace">
+					<xsl:with-param name="string" select="substring-after($string, $search)"/>
+					<xsl:with-param name="search" select="$search"/>
+					<xsl:with-param name="replace" select="$replace"/>
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$string"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
 </xsl:stylesheet>

@@ -172,7 +172,7 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		if (!skipInputBind){
 			$input.change(function(){
 				var rfName = field.name.replace('.im', '');
-				$('input[name="'+ rfName + '"]').val($(this).val());
+				$('input[name="'+ rfName + '"]').val($(this).val().replace(/\'/g, "\\'"));
 			});
 		}
 		
@@ -183,7 +183,7 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 
 		return $input;
 	}
-	
+
 
 	var textControl = function(field){
 		var $label = createLabel(field.label, field.id);
@@ -269,7 +269,7 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		field.rfName = field.name.replace('.im', '');
 
 		$textarea.change(function(){
-			$('input[name="'+ field.rfName + '"]').val($(this).val().replace(/(\r\n|\n|\r)/gm,""));
+			$('input[name="'+ field.rfName + '"]').val($(this).val().replace(/(\r\n|\n|\r)/gm,"").replace(/\'/g, "\\'"));
 		})
 
 		// add to rtEditor field list ready for load
