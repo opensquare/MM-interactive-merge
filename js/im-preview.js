@@ -28,6 +28,7 @@ function IMPreview($container, im){
 			tabManager.addTab(previewTabs.preview);
 			this.loadMergePreview();
 		}
+		imInstance.inputActive = this.inputActive;
 	}
 
 	this.loadPayloadData = function(flowId){
@@ -41,6 +42,10 @@ function IMPreview($container, im){
 		var payload = parsePayload(payloadXML.getElementsByTagName('data')[0]);
 		$payloadContent = $('<div class="payloadData"></div>').append(payload);
 		return $payloadContent;
+	}
+
+	this.inputActive = function(){
+		tabManager.switchTo(previewTabs.payload);
 	}
 
 	this.loadMergePreview = function(){

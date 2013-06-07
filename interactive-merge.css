@@ -206,6 +206,8 @@ section{
 }
 .previewPane.open h4 {
 	cursor: pointer;
+	transform:rotate(0deg);
+	-ms-transform:rotate(0deg);
 	-webkit-transform:rotate(0deg);
 	margin: 0;
 	padding: 10px;

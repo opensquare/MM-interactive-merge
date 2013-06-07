@@ -12,6 +12,7 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 	var flow = flow;
 	var flowLoaded = false;
 	var imContainer = $(IMcontainer);
+	var _this = this;
 
 	this.init = function(){
 		controls = [
@@ -174,12 +175,15 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 				$('input[name="'+ rfName + '"]').val($(this).val());
 			});
 		}
+		
 		$input.focus(function(){
 			lastActiveInput = $(this);
+			_this.inputActive();
 		})
 
 		return $input;
 	}
+	
 
 	var textControl = function(field){
 		var $label = createLabel(field.label, field.id);
@@ -333,6 +337,8 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 			CKEDITOR.instances[fieldName].destroy();
 		}
 	}
+
+	this.inputActive = function(){};
 
 	this.init();
 };
