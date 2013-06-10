@@ -138,6 +138,8 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 				case "richText":
 					return new richTextControl(field);
 					break;
+				case "file":
+					return new fileControl(field);
 				default:
 					return new textControl(field);
 			}
@@ -276,6 +278,22 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		rtEditors.push(field);
 
 		return [$label, $textarea];
+	}
+	var fileControl = function(field){
+		var $label = createLabel(field.label);
+		// disabled for now
+		var $input = $('<input type="checkbox">').attr('name', field.name).val(field.value).prop('checked', true).prop('disabled',true);
+		var $inputLabel = createLabel(field.value, field.id);
+		$input.change(function(){
+			var rfName = field.name.replace('.im', '');
+			var $rfInput = $('input[name="'+ rfName + '"]');
+			if ($(this).is(':checked')){
+				$rfInput.val($(this).val());
+			} else {
+				$rfInput.val('');
+			}
+		});
+		return [$label, $input, $inputLabel];
 	}
 
 	function parseDateTimeValue(value){

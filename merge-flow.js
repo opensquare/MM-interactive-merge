@@ -20,7 +20,7 @@
 					"stop:invalidJob", 
 					{
 						name: "next",
-						target: "interactiveMerge",
+						target: "loadOutstandingTemplates",
 						dataDocTransform: "xslt/formatJobData.xsl",
 						submissions: [
 							{
@@ -32,7 +32,8 @@
 							{
 								url: "{{$end-point-templates}}/{{//mmJob//template/fileName}}/fieldsXML",
 								method: "get",
-								resultInsertPoint: "/merge/ifl"
+								resultInsertPoint: "/merge/templates/next",
+								postTransform: "xslt/ifl.xsl"
 							},
 							{
 								url: "http://localhost:8080{{$contextPath}}/echo",
@@ -41,12 +42,52 @@
 									echoData: "[dataDocument]",
 									paramToEcho: "echoData"
 								},
-								postTransform: "xslt/formatJobData.xsl",
+								postTransform: "xslt/nextTemplate.xsl",
 								resultInsertPoint: "/"
 							}
 						]
 					}
 					
+				]
+			},
+			{id: "loadOutstandingTemplates", url: "outstanding-templates.html", docBase: "/merge/templateLoader",
+				actions: [
+					{
+						name: "proceed",
+						target: "interactiveMerge",
+						submission: {
+							url: "http://localhost:8080{{$contextPath}}/echo",
+							method: "post",
+							data: {
+								echoData: "[dataDocument]",
+								paramToEcho: "echoData"
+							},
+							postTransform: "xslt/formatJobData.xsl",
+							resultInsertPoint: "/"
+						}
+					},
+					{
+						name: "addTemplate",
+						target: "loadOutstandingTemplates",
+						submissions: [
+							{
+								url: "{{$end-point-templates}}/{{//nextTemplate/file}}/fieldsXML",
+								method: "get",
+								resultInsertPoint: "/merge/templates/next",
+								postTransform: "xslt/ifl.xsl"
+							},
+							{
+								url: "http://localhost:8080{{$contextPath}}/echo",
+								method: "post",
+								data: {
+									echoData: "[dataDocument]",
+									paramToEcho: "echoData"
+								},
+								postTransform: "xslt/nextTemplate.xsl",
+								resultInsertPoint: "/"
+							}
+						]
+					}
 				]
 			},
 			{id: "invalidJob", url: "invalid-job.html"},

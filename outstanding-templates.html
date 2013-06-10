@@ -1,0 +1,21 @@
+<form rhinoforms="true">
+	<header>
+		<h1>Loading Job Information...</h1>
+	</header>
+	<section style="display:none">
+		<input type="hidden" name="nextTemplate.file">
+		<input type="submit" rf.action="addTemplate">
+		<input type="submit" rf.action="proceed">
+	</section>
+	<script>
+		rf.onFormLoad(function(){
+			if ('{{//templateLoader//nextTemplate/file}}' !== ''){
+				console.debug('loading additional template: {{//templateLoader//nextTemplate/file}}');
+				$('input[rf\\.action=addTemplate]').click();
+			} else {
+				console.debug('loading templates complete, proceeding to interactive merge');
+				$('input[rf\\.action=proceed]').click();
+			}
+		})
+	</script>
+</form>

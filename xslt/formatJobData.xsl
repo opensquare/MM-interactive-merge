@@ -5,7 +5,7 @@
 	<!-- 
 		Transform has two main steps:
 
-		The global variables organises the job data by pairing up matching
+		The global variables organise the job data by pairing up matching
 		payload and template fields, collecting payload fields with @query but
 		no matching template field and sorting subrecords and repeated fields 
 		into repeating groups. 
@@ -274,8 +274,14 @@
 					<xsl:value-of select="payloadField/@name"/>
 				</xsl:attribute>
 				<xsl:element name="{replace($name, '[:\.]', '-')}">
+					<xsl:variable name="value">
+						<xsl:choose>
+							<xsl:when test="$type='file'"><xsl:value-of select="substring-after(templateField/type, '-')"/></xsl:when>
+							<xsl:otherwise><xsl:value-of select="payloadField"/></xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
 					<xsl:call-template name="replace">
-						<xsl:with-param name="string" select="payloadField"/>
+						<xsl:with-param name="string" select="$value"/>
 						<xsl:with-param name="search" select='"&apos;"'/>
 						<xsl:with-param name="replace" select='"\&apos;"'/>
 					</xsl:call-template>
