@@ -84,7 +84,7 @@
 					case 'Cancel':
 						var c = confirm('Are you sure you wish to cancel?');
 						if (c){
-							window.close();
+							window.location.replace('{{$cancel-redirect}}');
 						}
 						break;
 				}
