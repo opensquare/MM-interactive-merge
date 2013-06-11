@@ -4,6 +4,13 @@
 		<h1>Loading Job Information...</h1>
 	</header>
 	<section>
+		<!-- for each's needed to achieve 'double' value injection -->
+		<rf.foreach select="/merge/header/main" as="h">
+			<input type="hidden" name="mainHeader" rf.calculated="'{{h}}'">
+		</rf.foreach>
+		<rf.foreach select="/merge/header/sub" as="h">
+			<input type="hidden" name="subHeader" rf.calculated="'{{h}}'">
+		</rf.foreach>
 		<input type="submit" rf.action="next" style="display:none;"/>
 		<input type="button" rf.action="stop" style="display:none;"/>
 	</section>

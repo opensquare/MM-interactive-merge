@@ -194,6 +194,10 @@ section{
 	z-index: 99;
 	padding-top: 450px;
 }
+.previewPane .toggleBar:hover{
+	background-color:#2F61AD;
+	cursor: pointer;
+}
 .previewPane.closed .toggleBar:after{
 	content: '<<';
 }

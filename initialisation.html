@@ -3,6 +3,8 @@
 		<h1>Loading Job Information...</h1>
 	</header>
 	<section>
+		<input type="hidden" name="header.main" rf.calculated="'{{$merge-header}}'">
+		<input type="hidden" name="header.sub" rf.calculated="'{{$merge-sub-header}}'">
 		<input type="submit" rf.action="next" style="display:none;"/>
 		<input type="button" rf.action="iflFields" style="display:none;"/>
 	</section>
