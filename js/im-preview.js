@@ -9,7 +9,8 @@ function IMPreview($container, im){
 
 	var $previewPane;
 	var tabManager;
-	var pollSettings;
+	var pollInterval;
+	var outputUrl;
 
 	var _this = this;
 	
@@ -18,15 +19,15 @@ function IMPreview($container, im){
 		$mainContainer.append($paneTemplate);
 		$previewPane = $('.previewPane', $mainContainer);
 		tabManager = new TabManager($previewPane);
-		//pollSettings = pollSettings
 	}
-	this.onReady = function(flowId, jobId, previewRequested){
+	this.onReady = function(flowId, jobId, settings){
 		tabManager.emptyTabs();
 		tabManager.addTab(previewTabs.payload);
 		this.loadPayloadData(flowId);
-		if (previewRequested === 'true') {
+		if (settings.previewRequested === 'true') {
+			outputUrl =  $(settings.outputProxy).attr('rf.source') + '?rf.flowId=' + flowId;
 			tabManager.addTab(previewTabs.preview);
-			this.loadMergePreview();
+			this.loadMergePreview(settings, flowId);
 		}
 		imInstance.inputActive = this.inputActive;
 	}
@@ -48,14 +49,86 @@ function IMPreview($container, im){
 		tabManager.switchTo(previewTabs.payload);
 	}
 
-	this.loadMergePreview = function(){
+	this.loadMergePreview = function(settings, flowId){
+		tabManager.setContent(previewTabs.preview, '<h3 class="loading" style="margin:auto;width:20%">Previewing Merge...</h3>');
 		tabManager.toggle(previewTabs.preview);
+		pollForMerge(settings,flowId, checkJobMerged);
 	}
 
 	this.close = function(){
 		tabManager.closePanel();
 	}
 
+	function checkJobMerged(data, textStatus, jqXHR){
+		if (jqXHR.status == 200){
+			switch (data.status){
+				case 'FINISHED_SUCCESSFULLY':
+					displayMergedOutput();
+					clearInterval(pollInterval);
+					break;
+				case 'FINISHED_WITH_ERRORS':
+					displayMergedOutput(data.errorMessage);
+					clearInterval(pollInterval);
+					break;
+				case 'DELETED':
+					displayJobDeleted();
+					clearInterval(pollInterval);
+					break;
+			}
+		} else {
+			pollFailed();
+		}
+		
+	}
+
+	function displayMergedOutput(error){
+		var content='';
+		if(error){
+			content='<p>Preview completed with errors: ' + error + '</p>';
+		}
+		content += '<iframe style="height:100%;width:100%" src="' + outputUrl + '" ></iframe>';
+		tabManager.setContent(previewTabs.preview, content);
+	}
+
+	function displayJobDeleted(){
+		tabManager.setContent(previewTabs.preview, '<p>The preview has been deleted from the job queue. Please try again</p>');
+	}
+
+	function pollForMerge(settings, flowId) {
+		var url = $(settings.jobsProxy).attr('rf.source') + '?rf.flowId=' + flowId;
+		var interval = settings.pollInterval;
+		
+		var $loadText = $previewPane.find('.contents h3.loading');
+		var loadTextLength = $loadText.text().length;
+		setInterval(function(){
+			var textLength = $loadText.text().length;
+			if (textLength >= loadTextLength){
+				$loadText.text($loadText.text().substr(0, loadTextLength - 3));
+			} else {
+				$loadText.text($loadText.text() + '.');
+			}
+		}, 400);
+
+		$.getJSON(url, checkJobMerged).fail(pollFailed);
+		var maxRequests = isNaN(settings.maxPreviewPollRequests) ? 99 : settings.maxPreviewPollRequests;
+		var requests = 0;
+		
+		pollInterval =  setInterval(function(){
+			requests += 1;
+			if (requests >= maxRequests){
+				clearInterval(pollInterval);
+				tabManager.setContent(previewTabs.preview, '<p>Waiting for preview has exceeded maximum limit. Check status of merge instances to ensure previews are being merged</p>');
+			} else {
+				$.getJSON(url, checkJobMerged).fail(pollFailed);
+			}
+		}, 1000 * interval);
+	}
+
+	function pollFailed(){
+		console.debug('Error getting job details. Polling for preview halted');
+		clearInterval(pollInterval);
+		tabManager.setContent(previewTabs.preview, '<p>Problem encountered whist waiting for preview</p>');
+	}
 
 	function parsePayload(payloadXML, sub){
 		var list = $('<ul>');
@@ -127,7 +200,20 @@ function IMPreview($container, im){
 
 
 		this.init = function(){
-			$container.empty().append('<div class="tabs"></div><div class="contents"></div>')
+			$container.empty().append('<div class="toggleBar">&nbsp;</div><div class="tabs"></div><div class="contents"></div>');
+			$container.find('.toggleBar').click(function(){
+				var activeTab = false;
+				$container.find('.tabContainer').each(function(){
+					if ($(this).hasClass('active')){
+						activeTab = true;
+					}
+				})
+				if (!activeTab){
+					_this.toggle(tabs.payload.name);
+				} else {
+					_this.toggle();
+				}
+			})
 		}
 
 		this.emptyTabs = function(){
@@ -161,7 +247,7 @@ function IMPreview($container, im){
 					$container.addClass(activeTab.group);
 					findTabPart(activeTab.group, tabContainerSelector).addClass('active');
 					findTabPart(activeTab.group, tabContentSelector).addClass('active');
-					activeTab.active = true;
+					tabs[tab].active = true;
 				} else {
 					$container.removeClass(tabs[t].group);
 					findTabPart(tabs[t].group, tabContainerSelector).removeClass('active');
@@ -174,10 +260,10 @@ function IMPreview($container, im){
 
 		this.toggle = function(tab){
 			if($container.hasClass('open')){
-				if (!tabs[tab].active){
+				if (tab && !tabs[tab].active){
 					this.switchTo(tab);
 				} else {
-					this.switchTo();
+					//this.switchTo();
 					this.closePanel();
 				}
 			} else {

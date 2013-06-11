@@ -99,19 +99,20 @@
 					},
 					{
 						name: "preview",
-						target: "interactiveMerge"/*,
+						target: "interactiveMerge",
 						submission: {
 							url: "{{$end-point-submit}}",
 							method: "post",
 							preTransform: "xslt/submitJob.xsl",
 							data: {
 								username: "xpath://merge/jobDetails//username",
-								description: "xpath://merge/interactive/imDescription",
+								description: "xpath://merge/interactive/imPreviewDescription",
 								searchTerms: "xpath://merge/interactive/searchTerms",
 								jobType: "MERGE",
 								payload: "[dataDocument]"
-							}
-						}*/
+							},
+							resultInsertPoint: "/merge/previewJob"
+						}
 					},
 					{
 						name: "submit",

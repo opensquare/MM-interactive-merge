@@ -280,10 +280,10 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		return [$label, $textarea];
 	}
 	var fileControl = function(field){
-		var $label = createLabel(field.label);
+		var $label = createLabel(field.label).css('opacity', '0.7');
 		// disabled for now
-		var $input = $('<input type="checkbox">').attr('name', field.name).val(field.value).prop('checked', true).prop('disabled',true);
-		var $inputLabel = createLabel(field.value, field.id);
+		var $input = $('<input type="checkbox">').attr('name', field.name).val(field.value).prop('checked', true).prop('disabled',true).css('opacity', '0.7');
+		var $inputLabel = createLabel(field.value, field.id).css('opacity', '0.7');
 		$input.change(function(){
 			var rfName = field.name.replace('.im', '');
 			var $rfInput = $('input[name="'+ rfName + '"]');

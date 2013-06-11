@@ -2,6 +2,7 @@
 	<header>
 		<h1 title="template - {{template/fileName}}">Interactive Merge - <span class="subName">{{/merge//jobDetails//description}}</span></h1>
 		<input type="hidden" name="imDescription" rf.calculated="'Interactive Merge of {{/merge/jobDetails//id}} ({{/merge/jobDetails//description}})'"/>
+		<input type="hidden" name="imPreviewDescription" rf.calculated="'Interactive Preview of {{/merge/jobDetails//id}} ({{/merge/jobDetails//description}})'"/>
 		<h2 rf.includeIf="'{{$show-template}}' === 'true'">Template Requested: <span class="subName">{{template/fileName}}</span></h2>
 	</header>
 	<section id="destinations" rf.includeIf="'{{$show-destinations}}' === 'true' || '{{$show-search-terms}}' === 'true'">
@@ -49,11 +50,19 @@
 			<input type="submit" rf.action="submit" value="Next" style="display:none">
 		</div>
 		<input type="hidden" name="previewRequested" id="input_prevReq"/>
-		<input type="hidden" rf.source="{{$end-point-jobs}}/{{/merge/jobDetails//id}}" id="jobsProxy">
+		<input type="hidden" name="proxy" rf.source="{{$end-point-jobs}}/{{substring(/merge/previewJob,30)}}" id="jobsProxy">
+		<input type="hidden" rf.source="{{$end-point-output}}/{{substring(/merge/previewJob,30)}}/0" id="outputProxy">
 	</footer>
 	<script>
 		rf.onFormLoad(function(){
-			merge_preview.onReady('{{$rf.flowId}}', {{/merge/jobDetails//id}},'{{previewRequested}}');
+			var previewSettings = {
+				'previewRequested' : '{{previewRequested}}',
+				'pollInterval' : '{{$preview-poll-frequency}}',
+				'jobsProxy' : '#jobsProxy',
+				'outputProxy' : '#outputProxy'
+			}
+			merge_preview.onReady('{{$rf.flowId}}', {{/merge/jobDetails//id}}, previewSettings);
+			//merge_preview.onReady('{{$rf.flowId}}', {{/merge/jobDetails//id}},'{{previewRequested}}');
 			interactive_merge.onReady();
 
 			// update rich text field rf counterparts before submitting
@@ -72,9 +81,11 @@
 						}
 						console.debug('Previewing request');
 						break;
-					default:
-						$('input[rf\\.action=reload]').click();
-						console.debug('Reloading page');
+					case 'Cancel':
+						var c = confirm('Are you sure you wish to cancel?');
+						if (c){
+							window.close();
+						}
 						break;
 				}
 			});
