@@ -9,11 +9,10 @@
 	</section>
 	<script>
 		rf.onFormLoad(function(){
-			// to correct on working preview functionality
-			if ('{{preview/jobId}}' == '') {
-					$('input[rf\\.action=combinedMerge]', '.rhinoforms-merge-container').click();
-			} else {
+			if ('{{previewRequested}}' == 'true') {
 					$('input[rf\\.action=deliveryOnly]', '.rhinoforms-merge-container').click();
+			} else {
+					$('input[rf\\.action=combinedMerge]', '.rhinoforms-merge-container').click();
 			}
 		});
 	</script>

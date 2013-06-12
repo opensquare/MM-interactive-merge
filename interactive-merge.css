@@ -66,6 +66,13 @@ input[type="checkbox"]:checked:after {
 	background-color: #4F81BD;
 	font-size: 1.3em;
 }
+div.cke{
+	display: inline-block;
+	width:50%;
+}
+label.rteLabel{
+	vertical-align: top;
+}
 section{
 	padding: 0 1em;
 }

@@ -187,12 +187,22 @@ function IMPreview($container, im){
 			'payload' : {
 				'text': 'Data',
 				'group' : 'payload',
-				'name' : 'payload'
+				'name' : 'payload',
+				'onShow' : function(){
+					$mainContainer.addClass('show-preview');
+				},
+				'onHide' : function(){
+					$mainContainer.removeClass('show-preview');
+				}
 			},
 			'preview' : {
 				'text' : 'Merge Preview',
 				'group' : 'merge',
-				'name' : 'preview'
+				'name' : 'preview',
+				'onShow' : function(){
+					$mainContainer.removeClass('show-preview');
+				},
+				'onHide' : function(){}
 			}
 		}
 		var tabContainerSelector = '.tabs .tabContainer';
@@ -202,16 +212,11 @@ function IMPreview($container, im){
 		this.init = function(){
 			$container.empty().append('<div class="toggleBar">&nbsp;</div><div class="tabs"></div><div class="contents"></div>');
 			$container.find('.toggleBar').click(function(){
-				var activeTab = false;
-				$container.find('.tabContainer').each(function(){
-					if ($(this).hasClass('active')){
-						activeTab = true;
-					}
-				})
+				var activeTab = getActiveTab();
 				if (!activeTab){
 					_this.toggle(tabs.payload.name);
 				} else {
-					_this.toggle();
+					_this.toggle(activeTab);
 				}
 			})
 		}
@@ -262,29 +267,47 @@ function IMPreview($container, im){
 			if($container.hasClass('open')){
 				if (tab && !tabs[tab].active){
 					this.switchTo(tab);
+					tabs[tab].onShow();
 				} else {
-					//this.switchTo();
 					this.closePanel();
+					for (var t in tabs){
+						tabs[t].onHide();
+					}
 				}
 			} else {
 				$container.addClass('open');
 				if (tab){
 					this.switchTo(tab);
+					tabs[tab].onShow();
+				} else {
+					var activeTab = getActiveTab();
+					if (activeTab){
+						this.switchTo(activeTab);
+						tabs[activeTab].onShow();
+					}
 				}
 				this.openPanel();
 			}
 		}
 
+		function getActiveTab(){
+			for (var t in tabs){
+				if (tabs[t].active){
+					return t;
+				}
+			}
+			return false;
+		}
+
 		this.openPanel = function(){
 			$container.addClass('open');
 			$('.previewTab .toggle', $container).addClass('toggleClose');
-			$mainContainer.addClass('show-preview');
+
 		}
 
 		this.closePanel = function(){
 			$container.removeClass('open');
 			$('.previewTab .toggle', $container).removeClass('toggleClose');
-			$mainContainer.removeClass('show-preview');
 		}
 
 		function findTabPart(group, selector){

@@ -120,7 +120,7 @@
 					}
 				]
 			},
-			{id: "previewCheck", url: "submit-direction.html", 
+			{id: "previewCheck", url: "submit-direction.html", docBase: "/merge/interactive",
 				actions: [
 					{
 						name: "combinedMerge",
@@ -136,7 +136,8 @@
 									searchTerms: "xpath://merge/interactive/searchTerms",
 									jobType: "COMBINED",
 									payload: "[dataDocument]"
-								}
+								},
+								resultInsertPoint: "/merge/submitResult"
 							},
 							{
 								url: "{{$end-point-complete}}/{{//jobDetails//id}}",
@@ -148,23 +149,24 @@
 						name: "deliveryOnly",
 						target: "jobComplete",
 						submissions: [
-							/*{
+							{
 								url: "{{$end-point-submit}}",
 								method: "post",
-								preTransform: "",
+								preTransform: "xslt/deliverOnly.xsl",
 								data: {
-									username: "IM",
+									username: "xpath://merge/jobDetails//username",
 									description: "xpath://merge/interactive/imDescription",
 									searchTerms: "xpath://merge/interactive/searchTerms",
 									jobType: "DELIVERY",
 									payload: "[dataDocument]"
-								}
+								},
+								resultInsertPoint: "/merge/submitResult"
 							},
 							{
 								url: "{{$end-point-complete}}/{{//jobDetails//id}}",
 								method: "get",
 								resultInsertPoint: "/merge/complete"
-							}*/
+							}
 						]
 					}
 				]
