@@ -13,7 +13,7 @@
 	<!-- Rebuild Destinations -->
 	<xsl:template match="destinations">
 		<destinations>
-			<xsl:apply-templates select="destination"/>
+			<xsl:apply-templates select="destination[selected='true']"/>
 		</destinations>
 	</xsl:template>
 

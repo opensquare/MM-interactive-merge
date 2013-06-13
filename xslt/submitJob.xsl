@@ -89,10 +89,10 @@
 		</xsl:if>
 	</xsl:template>
 
-	<!-- Rebuild Destinations -->
+	<!-- Rebuild Selected Destinations -->
 	<xsl:template name="destinations">
 		<destinations>
-			<xsl:apply-templates select="/merge/interactive/destinations/destination"/>
+			<xsl:apply-templates select="/merge/interactive/destinations/destination[selected='true']"/>
 		</destinations>
 	</xsl:template>
 

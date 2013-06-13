@@ -80,6 +80,17 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		}
 	}
 
+	this.hasDestinationSelected = function(dCheckboxes) {
+		var dInputs = $(dCheckboxes);
+		var dIsSelected = false;
+		dInputs.each(function(){
+			if ($(this).prop('checked') == true){
+				dIsSelected = true;
+			}
+		});
+		return dIsSelected;
+	}
+
 	// private methods 
 	function isValidId(str){
 		var pattern = /^#[0-9]+$/g;

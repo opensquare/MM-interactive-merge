@@ -7,11 +7,19 @@
 	</header>
 	<section id="destinations" rf.includeIf="'{{$show-destinations}}' === 'true' || '{{$show-search-terms}}' === 'true'">
 		<div rf.includeIf="'{{$show-destinations}}' === 'true'">
-			<h2>Destinations: </h2>
-			<ul>
+			<h2>Available Destinations: </h2>
+			<ul class="im_destinations">
 				<rf.forEach select="destinations/destination" as="d">
-					<li>
-						<h3>{{d.@name}}</h3>
+					<li class="im_destination">
+						<label>{{d.@name}} <input type="checkbox" name="destinations.destination[{{d.index}}].selected" value="true" 
+							rf.initialValue="!{{$show-destinations}}"></label>
+						<ul class="im_dest_params">
+							<rf.foreach select="parameter" as="p">
+								<li class="im_dest_param">
+									<span>{{p.@name}} - {{p}}</span>
+								</li>
+							</rf.foreach>
+						</ul>
 					</li>
 				</rf.forEach>
 			</ul>
@@ -70,6 +78,10 @@
 
 			// update rich text field rf counterparts before submitting
 			$('input[type="button"].im-submit').click(function(){
+				if(!interactive_merge.hasDestinationSelected('.im_destination input[type=checkbox]')){
+					alert('Please select at least one destination');
+					return;
+				}
 				interactive_merge.updateRTEFields();
 				merge_preview.close();
 				switch ($(this).val()) {

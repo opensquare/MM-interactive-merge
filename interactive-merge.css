@@ -86,6 +86,7 @@ section{
 	padding: 1%;
 	margin-left: 7.5%;
 	width: 80%;
+	min-width:900px;
 }
 .im-container.show-preview .merge-content {
 	width: 75%;
@@ -101,20 +102,41 @@ section{
 	border-bottom-left-radius: 0.5em;
 	border-bottom-right-radius: 0.5em;
 }
-
-#destinations ul {
-	margin: 0;
-	padding: 0 5% 0.1% 5%;
+#destinations ul.im_destinations, #destinations h2 {
+	padding: 1%;
+	float:left;
+	margin-top:0;
 }
-
-#destinations label {
+#destinations ul.im_destinations{
+	width:65%;
+}
+#destinations ul li{
+	list-style-type:none;
+}
+#destinations ul.im_destinations > li {
+	display:inline-block;
+	width:25%;
+}
+#destinations .im_destination label{
+	font-size:1.5em;
+	font-weight: bold;
+	padding:0;
+	display:block;
+	width:100%;
+}
+#destinations .im_destinations input[type="checkbox"]{
+	margin:0;
+}
+#destinations ul.im_dest_params {
+	padding:0;
+	float:left;
+}
+#destinations .searchTerms label {
 	padding: 0 1em 0 1em;
 	display: inline;
 }
-
-#destinations h2 {
-	padding: 1% 0 0 1%;
-	margin: 0.5%;
+#destinations .searchTerms{
+    clear:both;
 }
 
 .mergeField {
@@ -199,7 +221,7 @@ section{
 	width: 25px;
 	background-color: #3E70BA;
 	z-index: 99;
-	padding-top: 450px;
+	padding: 25% 0;
 }
 .previewPane .toggleBar:hover{
 	background-color:#2F61AD;
