@@ -245,6 +245,7 @@
 					<xsl:when test="templateField/type">
 						<xsl:value-of select="substring-before(concat(templateField/type, '-'), '-')"/>
 					</xsl:when>
+					<xsl:when test="templateField/name = 'emailAddress' or payloadField/@name = 'emailAddress'">email</xsl:when>
 					<xsl:otherwise>text</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
