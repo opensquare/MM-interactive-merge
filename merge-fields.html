@@ -53,7 +53,7 @@
 			<p rf.includeif="'{{previewRequested}}' == 'true'">
 				<em>Changes made after previewing will not be included in the final document unless another preview is requested</em>
 			</p>
-			<input type="button" value="Cancel" class="im-submit"/>
+			<input type="button" value="Cancel" class="im-submit" rf.includeif="'{{$cancel-redirect}}' != '{' + '{$cancel-redirect}}' && '{{$cancel-redirect}}' != ''"/>
 			<input type="button" value="Preview" class="im-submit" rf.includeIf="'{{$allow-preview}}' === 'true'"/>
 			<input type="button" value="Submit" class="im-submit"/>
 			<input type="submit" rf.action="reload" value="Next" style="display:none">
@@ -61,9 +61,9 @@
 			<input type="submit" rf.action="submit" value="Next" style="display:none">
 		</div>
 		<input type="hidden" name="previewRequested" id="input_prevReq"/>
-		<input type="hidden" name="previewJobId" rf.calculated="'{{substring(/merge/previewJob,30)}}'"/>
-		<input type="hidden" name="proxy" rf.source="{{$end-point-jobs}}/{{substring(/merge/previewJob,30)}}" id="jobsProxy">
-		<input type="hidden" rf.source="{{$end-point-output}}/{{substring(/merge/previewJob,30)}}/0" id="outputProxy">
+		<input type="hidden" name="previewJobId" rf.calculated="decodeXpathEncodedString('{{encode-for-uri(substring(/merge/previewJob,30))}}')"/>
+		<input type="hidden" name="proxy" rf.source="{{$end-point-jobs}}/{{replace(substring(/merge/previewJob,30),'\n','')}}" id="jobsProxy">
+		<input type="hidden" rf.source="{{$end-point-output}}/{{replace(substring(/merge/previewJob,30),'\n','')}}/0" id="outputProxy">
 	</footer>
 	<script>
 		rf.onFormLoad(function(){
@@ -71,7 +71,9 @@
 				'previewRequested' : '{{previewRequested}}',
 				'pollInterval' : '{{$preview-poll-frequency}}',
 				'jobsProxy' : '#jobsProxy',
-				'outputProxy' : '#outputProxy'
+				'outputProxy' : '#outputProxy',
+				'previewResponse' : decodeXpathEncodedString('{{encode-for-uri(/merge/previewJob)}}')
+
 			}
 			merge_preview.onReady('{{$rf.flowId}}', {{/merge/jobDetails//id}}, previewSettings);
 			interactive_merge.onReady();

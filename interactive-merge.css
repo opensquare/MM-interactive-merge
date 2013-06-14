@@ -22,7 +22,7 @@ label {
 	display: inline-block;
 	font-size: 1.2em;
 	padding: 0 1em 0 1em;
-	width: 40%;
+	width: 30%;
 }
 
 select {
@@ -68,7 +68,7 @@ input[type="checkbox"]:checked:after {
 }
 div.cke{
 	display: inline-block;
-	width:50%;
+	width:60%;
 }
 label.rteLabel{
 	vertical-align: top;

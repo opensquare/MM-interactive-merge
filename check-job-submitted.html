@@ -1,0 +1,19 @@
+<form rhinoforms="true">
+	<header>
+		<h1>Interactive Merge</h1>
+	</header>
+	<section>
+		<h2>Submitting Job...</h2>
+	</section>
+	<input type="submit" rf.action="completeJob" style="display:none;"/>
+	<input type="submit" rf.action="failJob" style="display:none;"/>
+	<script>
+		rf.onFormLoad(function(){
+			if("{{replace(replace(/merge/submitResult,"'","\\'"),"\n","")}}".indexOf('Job submitted successfully') == -1){
+				$('input[rf\\.action=failJob]').click();
+			} else {
+				$('input[rf\\.action=completeJob]').click();
+			}
+		});
+	</script>
+</form>

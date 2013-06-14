@@ -387,3 +387,6 @@ function validateMergeField(field, mandatory, type){
 		field.validate("pattern({regex:'^[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$'})");
 	}
 }
+function decodeXpathEncodedString(str){
+	return decodeURIComponent(str).replace(/%2C/g, ",").replace(/\n/g, "");
+}

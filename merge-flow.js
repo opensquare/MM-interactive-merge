@@ -124,54 +124,58 @@
 				actions: [
 					{
 						name: "combinedMerge",
-						target: "jobComplete",
-						submissions: [
-							{
-								url: "{{$end-point-submit}}",
-								method: "post",
-								preTransform: "xslt/submitJob.xsl",
-								data: {
-									username: "xpath://merge/jobDetails//username",
-									description: "xpath://merge/interactive/imDescription",
-									searchTerms: "xpath://merge/interactive/searchTerms",
-									jobType: "COMBINED",
-									payload: "[dataDocument]"
-								},
-								resultInsertPoint: "/merge/submitResult"
+						target: "checkJobSucceeded",
+						submission: {
+							url: "{{$end-point-submit}}",
+							method: "post",
+							preTransform: "xslt/submitJob.xsl",
+							data: {
+								username: "xpath://merge/jobDetails//username",
+								description: "xpath://merge/interactive/imDescription",
+								searchTerms: "xpath://merge/interactive/searchTerms",
+								jobType: "COMBINED",
+								payload: "[dataDocument]"
 							},
-							{
-								url: "{{$end-point-complete}}/{{//jobDetails//id}}",
-								method: "get"
-							}
-						]
+							resultInsertPoint: "/merge/submitResult"
+						}
 					},
 					{
 						name: "deliveryOnly",
-						target: "jobComplete",
-						submissions: [
-							{
-								url: "{{$end-point-submit}}",
-								method: "post",
-								preTransform: "xslt/deliverOnly.xsl",
-								data: {
-									username: "xpath://merge/jobDetails//username",
-									description: "xpath://merge/interactive/imDescription",
-									searchTerms: "xpath://merge/interactive/searchTerms",
-									jobType: "DELIVERY",
-									payload: "[dataDocument]"
-								},
-								resultInsertPoint: "/merge/submitResult"
+						target: "checkJobSucceeded",
+						submission: {
+							url: "{{$end-point-submit}}",
+							method: "post",
+							preTransform: "xslt/deliverOnly.xsl",
+							data: {
+								username: "xpath://merge/jobDetails//username",
+								description: "xpath://merge/interactive/imDescription",
+								searchTerms: "xpath://merge/interactive/searchTerms",
+								jobType: "DELIVERY",
+								payload: "[dataDocument]"
 							},
-							{
-								url: "{{$end-point-complete}}/{{//jobDetails//id}}",
-								method: "get",
-								resultInsertPoint: "/merge/complete"
-							}
-						]
+							resultInsertPoint: "/merge/submitResult"
+						}
 					}
 				]
 			},
-			{id: "jobComplete", url: "job-complete.html"}
+			{id: "checkJobSucceeded", url: "check-job-submitted.html", docBase: "/merge",
+				actions: [
+					{
+						name: "completeJob",
+						target: "jobComplete",
+						submission: {
+							url: "{{$end-point-complete}}/{{//jobDetails//id}}",
+							method: "get",
+							resultInsertPoint: "/merge/complete"
+						}
+					},
+					{
+						name: "failJob",
+						target: "jobComplete",
+					}
+				]
+			},
+			{id: "jobComplete", url: "job-complete.html", docBase: "/merge"}
 		]
 	}
 }

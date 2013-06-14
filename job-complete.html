@@ -1,9 +1,42 @@
-<form rhinoforms="true">
+<form rhinoforms="true" style="display:none">
 	<header>
 		<h1>Interactive Merge</h1>
 	</header>
-	<section>
-		<h2>Job Complete</h2>
-		<button onclick="window.close()">Close</button>
+	<section class="im_job_success" style="display:none">
+		<h2>Merge Complete</h2>
+		<input name="submitResult" type="hidden">
 	</section>
+	<section class="im_job_error" style="display:none">
+		<h2>Merge Failed</h2>
+		<p>An error occurred whilst trying to submit the job: <pre>{{replace(/merge/submitResult,"&apos;","\\&apos;")}}</pre></p>
+	</section>
+	<footer id="submission">
+		<div id="actions" rf.includeif="'{{$cancel-redirect}}' != '{' + '{$cancel-redirect}}'">
+			<button onclick="window.location.replace('{{$cancel-redirect}}');" class="im-submit">Close</button>
+		</div>
+	</footer>
+	<script>
+		rf.onFormLoad(function(){
+			// build empty property comparison strings to avoid rf value injection
+			var successPlaceholder = '{' + '{$merge-success-redirect}}';
+			var failPlaceholder = '{' + '{$merge-failed-redirect}}';
+
+			if("{{replace(replace(/merge/submitResult,"'","\\'"),"\n","")}}".indexOf('Job submitted successfully') == -1){
+				//job errored
+				if ('{{$merge-failed-redirect}}' != failPlaceholder){
+					window.location.replace('{{$merge-failed-redirect}}');
+				} else {
+					$('.merge-content form').show();
+					$('.merge-content .im_job_error').show();
+				}
+			} else {
+				if ('{{$merge-success-redirect}}' != successPlaceholder){
+					window.location.replace('{{$merge-success-redirect}}');
+				} else {
+					$('.merge-content form').show();
+					$('.merge-content .im_job_success').show();
+				}
+			}
+		})
+	</script>
 </form>

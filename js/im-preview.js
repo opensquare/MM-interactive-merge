@@ -52,11 +52,20 @@ function IMPreview($container, im){
 	this.loadMergePreview = function(settings, flowId){
 		tabManager.setContent(previewTabs.preview, '<h3 class="loading" style="margin:auto;width:20%">Previewing Merge...</h3>');
 		tabManager.toggle(previewTabs.preview);
-		pollForMerge(settings,flowId, checkJobMerged);
+		out(settings.previewResponse.substr(29));
+		if (checkPreviewJobId(settings.previewResponse.substr(29))){
+			pollForMerge(settings,flowId, checkJobMerged);
+		} else {
+			pollFailed({}, {}, settings.previewResponse);
+		}
 	}
 
 	this.close = function(){
 		tabManager.closePanel();
+	}
+
+	function checkPreviewJobId(id){
+		return !isNaN(parseInt(id)) && isFinite(id);
 	}
 
 	function checkJobMerged(data, textStatus, jqXHR){
@@ -114,7 +123,7 @@ function IMPreview($container, im){
 		var requests = 0;
 		
 		pollInterval =  setInterval(function(){
-			requests += 1;
+			//requests += 1;
 			if (requests >= maxRequests){
 				clearInterval(pollInterval);
 				tabManager.setContent(previewTabs.preview, '<p>Waiting for preview has exceeded maximum limit. Check status of merge instances to ensure previews are being merged</p>');
@@ -124,10 +133,10 @@ function IMPreview($container, im){
 		}, 1000 * interval);
 	}
 
-	function pollFailed(){
+	function pollFailed(jqXHR, textStatus, errorThrown){
 		console.debug('Error getting job details. Polling for preview halted');
 		clearInterval(pollInterval);
-		tabManager.setContent(previewTabs.preview, '<p>Problem encountered whist waiting for preview</p>');
+		tabManager.setContent(previewTabs.preview, '<p>Problem encountered whist waiting for preview:<pre>'+ errorThrown +'</pre></p>');
 	}
 
 	function parsePayload(payloadXML, sub){

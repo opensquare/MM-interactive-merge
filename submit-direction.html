@@ -10,8 +10,10 @@
 	<script>
 		rf.onFormLoad(function(){
 			if ('{{previewRequested}}' == 'true') {
+					console.debug('Sending delivery only request');
 					$('input[rf\\.action=deliveryOnly]', '.rhinoforms-merge-container').click();
 			} else {
+					console.debug('No preview made. Sending combined request');
 					$('input[rf\\.action=combinedMerge]', '.rhinoforms-merge-container').click();
 			}
 		});
