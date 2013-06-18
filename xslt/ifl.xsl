@@ -4,7 +4,11 @@
 	
 	<xsl:template match="/">
 		<fields xmlns="">
-			<xsl:apply-templates select="/fields/field"/>
+			<xsl:for-each select="/fields/field">
+				<xsl:if test="(count(preceding-sibling::field[starts-with(name, '!repeat(')]) + count(preceding-sibling::field[name='!endRepeat'])) mod 2 = 0">
+					<xsl:apply-templates select="."/>
+				</xsl:if>
+			</xsl:for-each>
 		</fields>
 	</xsl:template>
 
@@ -14,7 +18,7 @@
 		</field>
 	</xsl:template>
 
-	<xsl:template match="field[starts-with(name, '!')]">
+	<xsl:template match="field[starts-with(name, '!insertFile')]">
 		<field>
 			<xsl:choose>
 				<xsl:when test="starts-with(name, '!insertFile(')">
@@ -25,7 +29,6 @@
 					<xsl:copy-of select="query"/>
 					<xsl:if test="substring-after($file, '.') = 'docx'">
 						<file>
-							<xsl:attribute name="loaded">false</xsl:attribute>
 							<xsl:value-of select="$file"/>
 						</file>
 					</xsl:if>
@@ -35,6 +38,14 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</field>
+	</xsl:template>
+	
+	<xsl:template match="field[starts-with(name, '!repeat(')]">
+		<xsl:variable name="subrecord" select="substring-before(substring-after(name, '!repeat('), ')')"/>
+		<repeat>
+			<xsl:attribute name="name" select="$subrecord"/>
+			<xsl:apply-templates select="/fields/field[preceding-sibling::field[name=concat('!repeat(', $subrecord,')')] and following-sibling::field/name='!endRepeat']"/>
+		</repeat>	
 	</xsl:template>
 
 </xsl:stylesheet>

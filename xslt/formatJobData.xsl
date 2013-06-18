@@ -7,34 +7,88 @@
 
 		The global variables organise the job data by pairing up matching
 		payload and template fields, collecting payload fields with @query but
-		no matching template field and sorting subrecords and repeated fields 
-		into repeating groups. 
+		no matching template field and iterating over subrecords to produce the required amount
+		of repeating groups. 
 
-		The root template then filters required fields and transforms this information 
-		ready for interpretation by Rhinoforms/IM, as well as passing the existing 
+		The root match template then filters out unnecessary fields and combines the template 
+		and payload information	ready for interpretation by Rhinoforms/IM, as well as passing the existing 
 		payload and job details through untouched.
 	-->
-	<xsl:variable name="repeatFields">
-		<xsl:for-each select="//ifl//field[starts-with(name,'!repeat(')]/name">
-			<key><xsl:value-of select="replace(., '!repeat\(|\)', '')"/></key>
-		</xsl:for-each>
-	</xsl:variable>
-	<xsl:variable name="templateFields">
-		<xsl:for-each select="//ifl//field[not(starts-with(name, '!'))]">
-			<xsl:call-template name="collectTemplateFields">
-				<xsl:with-param name="tField" select="."/>
-			</xsl:call-template>
-		</xsl:for-each>
-	</xsl:variable>
+	
 	<xsl:variable name="payloadFields">
 		<xsl:copy-of select="/merge/payload//data/record[1]/*"/>
 	</xsl:variable>
-	<xsl:variable name="combinedFields">
-		<xsl:apply-templates select="$templateFields/templateField"/>
+	
+	<xsl:variable name="mergedTemplateAndPayloadFields">
+		<xsl:apply-templates select="/merge/ifl/fields/*">
+			<xsl:with-param name="currentLevelPayloadFields" select="$payloadFields"/>
+		</xsl:apply-templates>
 	</xsl:variable>
-	<xsl:variable name="payloadOnlyFields">
-		<xsl:call-template name="getPayloadOnlyFields"/>
+	
+	<xsl:variable name="unmatchedPayloadFields">
+		<unmatchedFields>
+			<xsl:apply-templates select="$payloadFields/field[@query] | $payloadFields/subrecord"/>
+		</unmatchedFields>
 	</xsl:variable>
+
+	<xsl:template match="templateField">
+		<xsl:param name="currentLevelPayloadFields"/>
+		<xsl:variable name="name" select="name"/>
+		<mergeField>
+			<xsl:if test="parent::include">
+				<xsl:attribute name="file" select="parent::include[1]/@file"/>
+			</xsl:if>
+			<template>
+				<xsl:copy-of select="*"/>
+			</template>
+			<payload>
+				<xsl:copy-of select="$currentLevelPayloadFields/field[@name=$name or ends-with(@name, concat('.', $name))]/@*"/>
+				<xsl:value-of select="$currentLevelPayloadFields/field[@name=$name or ends-with(@name, concat('.', $name))]"/>
+			</payload>
+		</mergeField>
+	</xsl:template>
+	
+	<xsl:template match="repeat">
+		<xsl:param name="currentLevelPayloadFields"/>
+		<xsl:variable name="subrecordName" select="@name"/>
+		<xsl:variable name="repeatContents" select="*"/>
+		<xsl:for-each select="$currentLevelPayloadFields/subrecord[@name=$subrecordName]">
+			<xsl:variable name="subrecord" select="."/>
+			<mergedSubrecord>
+				<xsl:attribute name="name" select="$subrecordName"/>
+				<xsl:attribute name="index" select="$subrecord/@index"/>
+				<xsl:apply-templates select="$repeatContents">
+					<xsl:with-param name="currentLevelPayloadFields" select="$subrecord"/>
+				</xsl:apply-templates>
+			</mergedSubrecord>
+		</xsl:for-each>
+	</xsl:template>
+	
+	<xsl:template match="field[@query and (parent::record or parent::subrecord)]">
+		<xsl:param name="mergedFields" select="$mergedTemplateAndPayloadFields"/>
+		<xsl:variable name="fieldName" select="@name"/>
+		<xsl:if test="not($mergedFields/mergeField/payloadField[@name=$fieldName])">
+			<mergeField>
+				<template/>
+				<payload>
+					<xsl:copy-of select="@*"/>
+					<xsl:value-of select="."/>
+				</payload>
+			</mergeField>
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template match="subrecord">
+		<xsl:variable name="name" select="@name"/>
+		<xsl:variable name="index" select="@index"/>
+		<unMatchedSubrecord>
+			<xsl:attribute name="name" select="$name"/>
+			<xsl:attribute name="index" select="$index"/>
+			<xsl:apply-templates select="field[@query]">
+				<xsl:with-param name="mergedFields" select="$mergedTemplateAndPayloadFields/subrecord[@name=$name and @index=$index]"/>
+			</xsl:apply-templates>
+		</unMatchedSubrecord>
+	</xsl:template>
 
 	<xsl:template match="/">
 		<merge xmlns="">
@@ -45,21 +99,17 @@
 				<xsl:apply-templates select="/merge/payload//destinations"/>
 				<data>
 					<record>
-						<xsl:apply-templates select="$combinedFields/mergeField|$payloadOnlyFields/mergeField"/>
-						<xsl:for-each select="$repeatFields/key">
-							<xsl:variable name="currentKey" select="."/>
-							<xsl:call-template name="createRepeatSets">
-								<xsl:with-param name="repeatGroup">
-									<xsl:copy-of select="$combinedFields/repeat[@subrecord=$currentKey]|$payloadOnlyFields/repeat[@subrecord=$currentKey]"/>
-								</xsl:with-param>
-							</xsl:call-template>
-						</xsl:for-each>
+						<xsl:apply-templates select="$mergedTemplateAndPayloadFields/*"/>
+						<xsl:apply-templates select="$unmatchedPayloadFields/mergeField"/>
 					</record>
 				</data>
 			</interactive>
 			<xsl:copy-of select="/merge/payload"/>
 		</merge>
 	</xsl:template>
+	
+	<xsl:template match="field[not(@query)]"/>
+	<xsl:template match="unMatchedSubrecord"/>
 
 	<xsl:template match="destinations">
 		<destinations>
@@ -80,182 +130,38 @@
 			</xsl:for-each>
 		</destinations>
 	</xsl:template>
-
-	<xsl:template name="collectTemplateFields">
-		<xsl:param name="tField"/>
-		<xsl:variable name="repeatKey" select="$repeatFields/key[.=substring-before($tField/name, '.')]"/>
-		<xsl:choose>
-			<xsl:when test="$repeatKey != ''">
-				<templateField>
-					<xsl:attribute name="repeat"><xsl:value-of select="$repeatKey"/></xsl:attribute>
-					<name><xsl:value-of select="substring-after($tField/name, concat($repeatKey , '.'))"/></name>
-					<xsl:copy-of select="$tField/*[name()!='name']"/>
-				</templateField>
-			</xsl:when>
-			<xsl:otherwise>
-				<templateField>
-					<xsl:copy-of select="$tField/*"/>
-				</templateField>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-
-	<xsl:template match="templateField">
-		<xsl:variable name="fieldName" select="name"/>
-		<xsl:variable name="repeatName" select="@repeat"/>
-		<xsl:choose>
-			<xsl:when test="not(@repeat)">
-				<xsl:call-template name="mergeField">
-					<xsl:with-param name="templateField">
-						<xsl:copy-of select="./*"/>
-					</xsl:with-param>
-					<xsl:with-param name="payloadField">
-						<xsl:copy-of select="$payloadFields/field[@name=$fieldName or ends-with(@name, concat('.', $fieldName))]"/>
-					</xsl:with-param>
-				</xsl:call-template>
-			</xsl:when>
-			<xsl:otherwise>
-				<repeat>
-					<xsl:attribute name="subrecord">
-						<xsl:value-of select="$repeatName"/>
-					</xsl:attribute>
-					<xsl:attribute name="name">
-						<xsl:value-of select="name"/>
-					</xsl:attribute>
-					<xsl:variable name="currentTField" select="."/>
-					<xsl:for-each select="$payloadFields/subrecord[@name=$repeatName]">
-						<xsl:call-template name="mergeField">
-							<xsl:with-param name="index">
-								<xsl:value-of select="@index"/>
-							</xsl:with-param>
-							<xsl:with-param name="templateField">
-								<xsl:copy-of select="$currentTField/*"/>
-							</xsl:with-param>
-							<xsl:with-param name="payloadField">
-								<xsl:copy-of select="field[@name=$fieldName or ends-with(@name, concat('.', $fieldName))]"/>
-							</xsl:with-param>
-						</xsl:call-template>
-					</xsl:for-each>
-				</repeat>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-
-	<xsl:template name="mergeField">
-		<xsl:param name="index" select="''"/>
-		<xsl:param name="templateField" select="''"/>
-		<xsl:param name="payloadField"/>
-		<mergeField>
-			<xsl:if test="$index!=''">
-				<xsl:attribute name="subrecordIndex"><xsl:value-of select="$index"/></xsl:attribute>
-			</xsl:if>
-			<templateField>
-				<xsl:copy-of select="$templateField"/>
-			</templateField>
-			<payloadField>
-				<xsl:copy-of select="$payloadField/field/@*"/>
-				<xsl:value-of select="$payloadField/field"/>
-			</payloadField>
-		</mergeField>
-	</xsl:template>
-
-	<xsl:template name="getPayloadOnlyFields">
-		<xsl:for-each select="$payloadFields/field[@query]">
-			<xsl:call-template name="getUnmatchedField">
-				<xsl:with-param name="payloadField">
-					<xsl:copy-of select="."/>
-				</xsl:with-param>
-				<xsl:with-param name="fieldsToCheck">
-					<xsl:copy-of select="$combinedFields/mergeField"/>
-				</xsl:with-param>
-			</xsl:call-template>
-		</xsl:for-each>
-		<xsl:for-each select="$payloadFields/subrecord">
-			<xsl:variable name="subrecordName" select="@name"/>
-			<xsl:variable name="subrecordIndex" select="@index"/>
-			<repeat>
-				<xsl:attribute name="subrecord"><xsl:value-of select="$subrecordName"/></xsl:attribute>
-				<xsl:for-each select="field[@query]">
-					<xsl:call-template name="getUnmatchedField">
-						<xsl:with-param name="payloadField">
-							<xsl:copy-of select="."/>
-						</xsl:with-param>
-						<xsl:with-param name="index">
-							<xsl:value-of select="$subrecordIndex"/>
-						</xsl:with-param>
-						<xsl:with-param name="fieldsToCheck">
-							<xsl:copy-of select="$combinedFields/repeat[@subrecord=$subrecordName]/mergeField[@subrecordIndex=$subrecordIndex]"/>
-						</xsl:with-param>
-					</xsl:call-template>
-				</xsl:for-each>
-			</repeat>
-		</xsl:for-each>
-	</xsl:template>
-
-	<xsl:template name="getUnmatchedField">
-		<xsl:param name="payloadField"/>
-		<xsl:param name="fieldsToCheck"/>
-		<xsl:param name="index" select="''"/>
-		<xsl:variable name="fieldName" select="$payloadField/field/@name"/>
-		<xsl:if test="not($fieldsToCheck/mergeField/payloadField[@name=$fieldName])">
-			<xsl:call-template name="mergeField">
-				<xsl:with-param name="index">
-					<xsl:value-of select="$index"/>
-				</xsl:with-param>
-				<xsl:with-param name="payloadField">
-					<xsl:copy-of select="$payloadField"/>
-				</xsl:with-param>
-			</xsl:call-template>
-		</xsl:if>
-	</xsl:template>
-
-	<xsl:template name="createRepeatSets">
-		<xsl:param name="repeatGroup"/>
-		<xsl:for-each select="$repeatGroup/repeat[1]/mergeField">
-			<xsl:variable name="subIndex" select="@subrecordIndex"/>
-			<subrecord>
-				<xsl:attribute name="name">
-					<xsl:value-of select="$repeatGroup/repeat[1]/@subrecord"/>
-				</xsl:attribute>
-				<xsl:attribute name="index">
-					<xsl:value-of select="$subIndex"/>
-				</xsl:attribute>
-				<xsl:apply-templates select="$repeatGroup/repeat/mergeField[@subrecordIndex=$subIndex]"/>
-			</subrecord>
-		</xsl:for-each>
-	</xsl:template>
-
+	
 	<xsl:template match="mergeField">
-		<xsl:if test="templateField/query!='' or payloadField/@query!='' or (templateField/mandatory='true' and payloadField='')">
+		<xsl:if test="template/query!='' or payload/@query!='' or (template/mandatory='true' and payload='')">
 			<xsl:variable name="label">
 				<xsl:choose>
-					<xsl:when test="payloadField/@query">
-						<xsl:value-of select="payloadField/@query"/>
+					<xsl:when test="payload/@query">
+						<xsl:value-of select="payload/@query"/>
 					</xsl:when>
-					<xsl:when test="templateField/query">
-						<xsl:value-of select="templateField/query"/>
+					<xsl:when test="template/query">
+						<xsl:value-of select="template/query"/>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="templateField/name"/>
+						<xsl:value-of select="template/name"/>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
 			<xsl:variable name="type">
 				<xsl:choose>
-					<xsl:when test="templateField/type">
-						<xsl:value-of select="substring-before(concat(templateField/type, '-'), '-')"/>
+					<xsl:when test="template/type">
+						<xsl:value-of select="substring-before(concat(template/type, '-'), '-')"/>
 					</xsl:when>
-					<xsl:when test="templateField/name = 'emailAddress' or payloadField/@name = 'emailAddress'">email</xsl:when>
+					<xsl:when test="template/name = 'emailAddress' or payload/@name = 'emailAddress'">email</xsl:when>
 					<xsl:otherwise>text</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
 			<xsl:variable name="name">
 				<xsl:choose>
-					<xsl:when test="templateField/name">
-						<xsl:value-of select="templateField/name"/>
+					<xsl:when test="template/name">
+						<xsl:value-of select="template/name"/>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="payloadField/@name"/>
+						<xsl:value-of select="payload/@name"/>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
@@ -263,22 +169,22 @@
 				<xsl:attribute name="label"><xsl:value-of select="$label"/></xsl:attribute>
 				<xsl:attribute name="type"><xsl:value-of select="$type"/></xsl:attribute>
 				<xsl:attribute name="mandatory">
-					<xsl:value-of select="templateField/mandatory = 'true'"/>
+					<xsl:value-of select="template/mandatory = 'true'"/>
 				</xsl:attribute>
 				<xsl:attribute name="format">
-					<xsl:value-of select="substring-after(templateField/type, '-')"/>
+					<xsl:value-of select="substring-after(template/type, '-')"/>
 				</xsl:attribute>
 				<xsl:attribute name="templateName">
-					<xsl:value-of select="templateField/name"/>
+					<xsl:value-of select="template/name"/>
 				</xsl:attribute>
 				<xsl:attribute name="payloadName">
-					<xsl:value-of select="payloadField/@name"/>
+					<xsl:value-of select="payload/@name"/>
 				</xsl:attribute>
 				<xsl:element name="{replace($name, '[:\.]', '-')}">
 					<xsl:variable name="value">
 						<xsl:choose>
-							<xsl:when test="$type='file'"><xsl:value-of select="substring-after(templateField/type, '-')"/></xsl:when>
-							<xsl:otherwise><xsl:value-of select="payloadField"/></xsl:otherwise>
+							<xsl:when test="$type='file'"><xsl:value-of select="substring-after(template/type, '-')"/></xsl:when>
+							<xsl:otherwise><xsl:value-of select="payload"/></xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
 					<xsl:call-template name="replace">
@@ -289,6 +195,17 @@
 				</xsl:element>
 			</field>
 		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template match="mergedSubrecord">
+		<xsl:variable name="name" select="@name"/>
+		<xsl:variable name="index" select="@index"/>
+		<subrecord>
+			<xsl:attribute name="name" select="$name"/>
+			<xsl:attribute name="index" select="$index"/>
+			<xsl:apply-templates select="mergeField"/>
+			<xsl:apply-templates select="$unmatchedPayloadFields//unMatchedSubrecord[@index=$index and @name=$name]"/>
+		</subrecord>
 	</xsl:template>
 
 	<xsl:template name="replace">

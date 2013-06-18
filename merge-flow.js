@@ -55,16 +55,28 @@
 					{
 						name: "proceed",
 						target: "interactiveMerge",
-						submission: {
-							url: "http://localhost:8080{{$contextPath}}/echo",
-							method: "post",
-							data: {
-								echoData: "[dataDocument]",
-								paramToEcho: "echoData"
+						submissions: [
+							{
+								url: "http://localhost:8080{{$contextPath}}/echo",
+								method: "post",
+								data: {
+									echoData: "[dataDocument]",
+									paramToEcho: "echoData"
+								},
+								postTransform: "xslt/formatTemplates.xsl",
+								resultInsertPoint: "/"
 							},
-							postTransform: "xslt/formatJobData.xsl",
-							resultInsertPoint: "/"
-						}
+							{
+								url: "http://localhost:8080{{$contextPath}}/echo",
+								method: "post",
+								data: {
+									echoData: "[dataDocument]",
+									paramToEcho: "echoData"
+								},
+								postTransform: "xslt/formatJobData.xsl",
+								resultInsertPoint: "/"
+							},
+						]
 					},
 					{
 						name: "addTemplate",
