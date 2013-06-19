@@ -34,9 +34,10 @@
 			<rf.forEach select="data/record/field/*" as="f">
 				<div class="mergeField" id="fw_{{f.name()}}">
 					<input type="hidden" name="data.record.field.{{f.name()}}" 
-						   rf.validationFunction="validateMergeField(this, '{{f.parent::field.@mandatory}}', '{{f.parent::field.@type}}')"/>
+						   rf.validationFunction="validateMergeField(this, '{{f.parent::field.@mandatory}}', '{{f.parent::field.@type}}', action)"/>
 				</div>
 				<script>
+					// validateMergeField function is located in im.js
 					interactive_merge.createControl($("#fw_{{f.name()}}"),{
 						name: 'data.record.field.{{f.name()}}.im',
 						label: '{{f.parent::field.@label}}',
@@ -45,6 +46,22 @@
 						value: '{{f}}'
 					});
 				</script>
+			</rf.forEach>
+			<rf.forEach select="data/record/subrecord" as="s">
+				<div class="im_subrecord">
+					<h3>Subrecord: {{s.@name}} {{s.index}}</h3><input type="button" class="im-submit" value="Edit" data-index="{{s.index}}">
+					<input type="submit" rf.action="subrecord?index={{s.index}}" value="Edit" style="display:none" class="edit{{s.index}}">
+					<ul>
+						<rf.forEach select="field" as="sf">
+							<li><label>{{sf.@label}}<span rf.includeif="'{{sf.@mandatory}}' == 'true'">*</span></label>
+								<span class="im_srformat" data-format="{{sf.@type}}">{{sf.child::node()}}</span>
+								<input type="text" name="tempsubrecord.i{{sf.parent::subrecord.@index}}.{{sf.child::*.name()}}" 
+									rf.calculated="'{{sf.child::node()}}'"
+									disabled rf.validationFunction="validateMergeField(this, '{{sf.@mandatory}}', '{{sf.@type}}', action)">
+								</li>
+						</rf.forEach>
+					</ul>
+				</div>
 			</rf.forEach>
 		</div>
 	</section>
@@ -77,10 +94,11 @@
 			}
 			merge_preview.onReady('{{$rf.flowId}}', {{/merge/jobDetails//id}}, previewSettings);
 			interactive_merge.onReady();
+			interactive_merge.formatOutputs('.im_srformat', '.fields-container');
 
 			// update rich text field rf counterparts before submitting
 			$('input[type="button"].im-submit').click(function(){
-				if(!interactive_merge.hasDestinationSelected('.im_destination input[type=checkbox]')){
+				if(!interactive_merge.hasDestinationSelected('.im_destination input[type=checkbox]') && $(this).val() !== 'Edit'){
 					alert('Please select at least one destination');
 					return;
 				}
@@ -103,6 +121,12 @@
 						if (c){
 							window.location.replace('{{$cancel-redirect}}');
 						}
+						break;
+					case 'Edit':
+						var selector = 'input[rf\\.action].edit' + $(this).data('index'); + ']';
+						$('#input_prevReq').val('false');
+						console.debug('Editing subrecord: ' + $(this).data('index'));
+						$(selector).click();
 						break;
 				}
 			});

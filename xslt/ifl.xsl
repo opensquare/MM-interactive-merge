@@ -5,7 +5,7 @@
 	<xsl:template match="/">
 		<fields xmlns="">
 			<xsl:for-each select="/fields/field">
-				<xsl:if test="(count(preceding-sibling::field[starts-with(name, '!repeat(')]) + count(preceding-sibling::field[name='!endRepeat'])) mod 2 = 0">
+				<xsl:if test="(count(preceding-sibling::field[starts-with(name, '!repeat(')]) + count(preceding-sibling::field[starts-with(name, '!endRepeat(')])) mod 2 = 0">
 					<xsl:apply-templates select="."/>
 				</xsl:if>
 			</xsl:for-each>
@@ -44,7 +44,7 @@
 		<xsl:variable name="subrecord" select="substring-before(substring-after(name, '!repeat('), ')')"/>
 		<repeat>
 			<xsl:attribute name="name" select="$subrecord"/>
-			<xsl:apply-templates select="/fields/field[preceding-sibling::field[name=concat('!repeat(', $subrecord,')')] and following-sibling::field/name='!endRepeat']"/>
+			<xsl:apply-templates select="/fields/field[preceding-sibling::field[name=concat('!repeat(', $subrecord,')')] and following-sibling::field[name=concat('!endRepeat(', $subrecord, ')')]]"/>
 		</repeat>	
 	</xsl:template>
 

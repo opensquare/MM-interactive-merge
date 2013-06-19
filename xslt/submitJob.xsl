@@ -80,11 +80,13 @@
     			<xsl:attribute name="name">
 	    			<xsl:value-of select="$field/@templateName"/>
     			</xsl:attribute>
+    			<xsl:if test="@type = 'richText'">&lt;![HTML[</xsl:if>
     			<xsl:call-template name="replace">
 					<xsl:with-param name="string" select="$field"/>
 					<xsl:with-param name="replace" select='"&apos;"'/>
 					<xsl:with-param name="search" select='"\&apos;"'/>
     			</xsl:call-template>
+    			<xsl:if test="@type = 'richText'">]]&gt;</xsl:if>
     		</field>
 		</xsl:if>
 	</xsl:template>

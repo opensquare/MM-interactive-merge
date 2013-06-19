@@ -94,8 +94,9 @@ function IMPreview($container, im){
 		var content='';
 		if(error){
 			content='<p>Preview completed with errors: ' + error + '</p>';
+		} else {
+			content = '<iframe style="height:100%;width:100%" src="' + outputUrl + '" ></iframe>';
 		}
-		content += '<iframe style="height:100%;width:100%" src="' + outputUrl + '" ></iframe>';
 		tabManager.setContent(previewTabs.preview, content);
 	}
 
@@ -119,14 +120,14 @@ function IMPreview($container, im){
 		}, 400);
 
 		$.getJSON(url, checkJobMerged).fail(pollFailed);
-		var maxRequests = isNaN(settings.maxPreviewPollRequests) ? 99 : settings.maxPreviewPollRequests;
+		var maxRequests = isNaN(settings.maxPreviewPollRequests) ? 200 : settings.maxPreviewPollRequests;
 		var requests = 0;
 		
 		pollInterval =  setInterval(function(){
-			//requests += 1;
+			requests += 1;
 			if (requests >= maxRequests){
 				clearInterval(pollInterval);
-				tabManager.setContent(previewTabs.preview, '<p>Waiting for preview has exceeded maximum limit. Check status of merge instances to ensure previews are being merged</p>');
+				tabManager.setContent(previewTabs.preview, '<p>Waiting for preview has exceeded maximum limit. Check status of merge instances to ensure documents are being merged</p>');
 			} else {
 				$.getJSON(url, checkJobMerged).fail(pollFailed);
 			}

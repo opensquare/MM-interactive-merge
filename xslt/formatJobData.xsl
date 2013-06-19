@@ -33,7 +33,17 @@
 
 	<xsl:template match="templateField">
 		<xsl:param name="currentLevelPayloadFields"/>
-		<xsl:variable name="name" select="name"/>
+		<xsl:param name="subrecordName" select="''"/>
+		<xsl:variable name="name">
+			<xsl:choose>
+				<xsl:when test="$subrecordName!=''">
+					<xsl:value-of select="substring-after(name, concat($subrecordName, '.'))"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="name"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<mergeField>
 			<xsl:if test="parent::include">
 				<xsl:attribute name="file" select="parent::include[1]/@file"/>
@@ -59,6 +69,7 @@
 				<xsl:attribute name="index" select="$subrecord/@index"/>
 				<xsl:apply-templates select="$repeatContents">
 					<xsl:with-param name="currentLevelPayloadFields" select="$subrecord"/>
+					<xsl:with-param name="subrecordName" select="$subrecordName"/>
 				</xsl:apply-templates>
 			</mergedSubrecord>
 		</xsl:for-each>
@@ -109,7 +120,6 @@
 	</xsl:template>
 	
 	<xsl:template match="field[not(@query)]"/>
-	<xsl:template match="unMatchedSubrecord"/>
 
 	<xsl:template match="destinations">
 		<destinations>
@@ -132,6 +142,7 @@
 	</xsl:template>
 	
 	<xsl:template match="mergeField">
+		<xsl:param name="subrecordName" select="''"/>
 		<xsl:if test="template/query!='' or payload/@query!='' or (template/mandatory='true' and payload='')">
 			<xsl:variable name="label">
 				<xsl:choose>
@@ -157,6 +168,9 @@
 			</xsl:variable>
 			<xsl:variable name="name">
 				<xsl:choose>
+					<xsl:when test="starts-with(template/name, concat($subrecordName, '.')) and $subrecordName!=''">
+						<xsl:value-of select="substring-after(template/name, concat($subrecordName, '.'))"/>
+					</xsl:when>
 					<xsl:when test="template/name">
 						<xsl:value-of select="template/name"/>
 					</xsl:when>
@@ -203,7 +217,9 @@
 		<subrecord>
 			<xsl:attribute name="name" select="$name"/>
 			<xsl:attribute name="index" select="$index"/>
-			<xsl:apply-templates select="mergeField"/>
+			<xsl:apply-templates select="mergeField">
+				<xsl:with-param name="subrecordName" select="$name"/>
+			</xsl:apply-templates>
 			<xsl:apply-templates select="$unmatchedPayloadFields//unMatchedSubrecord[@index=$index and @name=$name]"/>
 		</subrecord>
 	</xsl:template>

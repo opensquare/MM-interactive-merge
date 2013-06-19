@@ -43,6 +43,21 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		// initialise CKEditor RTE for each IM textarea field
 		this.loadRTEs();
 	}
+
+	this.formatOutputs = function(identifier, container){
+		$(identifier, container).each(function(){
+			var type = $(this).data('format');
+			switch (type) {
+				case 'dateTime':
+					$(this).text(parseDate($(this).text()).format('DD/MM/YYYY HH:mm:ss'));
+					break;
+				case 'text':
+					$(this).text($(this).text().replace(/\\'/g, "'"));
+				default:
+					break;
+			}
+		})
+	}
 	
 	this.createControl = function($container, fieldData){
 
@@ -373,18 +388,20 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 };
 
 // rf.validationFunction called by hidden rf inputs
-function validateMergeField(field, mandatory, type){
-	if (mandatory == 'true'){
-		field.validate('required');
-	}
-	if (type == 'email'){
-		field.validate('email');
-	}
-	if (type == 'number'){
-		field.validate("pattern({regex:'^[0-9\\.]+$'})");
-	}
-	if (type == 'dateTime'){
-		field.validate("pattern({regex:'^[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$'})");
+function validateMergeField(field, mandatory, type, action){
+	if(action.indexOf('subrecord') == -1) {
+		if (mandatory == 'true'){
+			field.validate('required');
+		}
+		if (type == 'email'){
+			field.validate('email');
+		}
+		if (type == 'number'){
+			field.validate("pattern({regex:'^[0-9\\.]+$'})");
+		}
+		if (type == 'dateTime'){
+			field.validate("pattern({regex:'^[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$'})");
+		}
 	}
 }
 function decodeXpathEncodedString(str){

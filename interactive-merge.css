@@ -152,6 +152,18 @@ section{
 .searchTerms input[type="text"]{
 	width: 75%;
 }
+.im_subrecord .im-submit, .im_subrecord h3{
+	display:inline-block;
+	margin-right:30px;
+}
+.im_subrecord li{
+	list-style-type:none;
+}
+.im_subrecord input[type=text][disabled]{
+	border:none;
+	opacity:0;
+	width:1px;
+}
 #submission {
 	background: #C0C0C0;
 	color: #FFF;

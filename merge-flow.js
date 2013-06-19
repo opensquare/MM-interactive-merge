@@ -105,6 +105,7 @@
 			{id: "invalidJob", url: "invalid-job.html"},
 			{id: "interactiveMerge", url: "merge-fields.html", docBase: "/merge/interactive", 
 				actions:[
+					"subrecord:subrecords.editSubrecord(index=?)",
 					{
 						name: "reload",
 						target: "interactiveMerge"
@@ -188,6 +189,9 @@
 				]
 			},
 			{id: "jobComplete", url: "job-complete.html", docBase: "/merge"}
-		]
+		],
+		subrecords: [
+			{id: "editSubrecord", url: "edit-subrecord.html", docBase: "/merge/interactive/data/record/subrecord[index]", actions: ["back", "next"]}
+	]
 	}
 }
