@@ -1,8 +1,8 @@
-body {
+body div.im-container{
 	font-family: sans-serif;
 }
 
-header {
+div.im-container header {
 	background: #4F81BD;
 	color: #fff;
 	padding: 1em;
@@ -10,22 +10,22 @@ header {
 	border-top-right-radius: 0.5em;
 }
 
-header h1 {
+div.im-container header h1 {
 	border-bottom: 1px solid;
 	margin: 0;
 }
-header h2{
+div.im-container header h2{
 	margin: 0.5em 0 0;
 }
 
-label {
+div.im-container label {
 	display: inline-block;
 	font-size: 1.2em;
 	padding: 0 1em 0 1em;
 	width: 30%;
 }
 
-select {
+div.im-container select {
 	width: 20%;
 	margin-left: 0;
 	border: thin solid #0090C0;
@@ -33,21 +33,25 @@ select {
 	color: #AAA;
 }
 
-input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type='date'] {
+div.im-container input[type="text"], 
+div.im-container input[type="email"], 
+div.im-container input[type="password"], 
+div.im-container input[type="number"], 
+div.im-container input[type='date'] {
 	width: 25%;
 	padding: 0.1em 0.25em 0 0.25em;
 	border: thin solid #0090C0;
 	font-size: 1.3em;
 }
-input[type="date"]{
+div.im-container input[type="date"]{
 	width:auto;
 	vertical-align:top;
 }
-input[type="text"].time{
+div.im-container input[type="text"].time{
 	width:10%;
 	vertical-align:top;
 }
-input[type="checkbox"] {
+div.im-container input[type="checkbox"] {
 	padding: 0.45em;
 	background-color: #FFF;
 	border: thin solid #4F81BD;
@@ -55,28 +59,28 @@ input[type="checkbox"] {
 	-webkit-appearance: none;
 }
 
-input[type="checkbox"]:checked {
+div.im-container input[type="checkbox"]:checked {
 	padding: 0.2em 0.4em 0.2em 0.4em;
 	background-color: #4F81BD;
 }
 
-input[type="checkbox"]:checked:after {
+div.im-container input[type="checkbox"]:checked:after {
 	content: '✔';
 	color: #FFF;
 	background-color: #4F81BD;
 	font-size: 1.3em;
 }
-div.cke{
+div.im-container div.cke{
 	display: inline-block;
 	width:60%;
 }
-label.rteLabel{
+div.im-container label.im-rte-label{
 	vertical-align: top;
 }
-section{
+div.im-container section{
 	padding: 0 1em;
 }
-.rf-included-false{
+div.im-container .rf-included-false{
 	display: none!important;
 }
 
@@ -92,86 +96,88 @@ section{
 	width: 75%;
 	margin-left: 0;
 }
-.subName {
+div.im-container .im-sub-text {
 	font-size: 75%;
 }
 
-#destinations {	
+div.im-container .destinations {	
 	background: #C0C0C0;
 	color: #fff;
 	border-bottom-left-radius: 0.5em;
 	border-bottom-right-radius: 0.5em;
 }
-#destinations ul.im_destinations, #destinations h2 {
+div.im-container .destinations ul.im-destinations, 
+div.im-container .destinations h2 {
 	padding: 1%;
 	float:left;
 	margin-top:0;
 }
-#destinations ul.im_destinations{
+div.im-container .destinations ul.im-destinations{
 	width:65%;
 }
-#destinations ul li{
+div.im-container .destinations ul li{
 	list-style-type:none;
 }
-#destinations ul.im_destinations > li {
+div.im-container .destinations ul.im-destinations > li {
 	display:inline-block;
 	width:25%;
 }
-#destinations .im_destination label{
+div.im-container .destinations .im-destination label{
 	font-size:1.5em;
 	font-weight: bold;
 	padding:0;
 	display:block;
 	width:100%;
 }
-#destinations .im_destinations input[type="checkbox"]{
+div.im-container .destinations .im-destinations input[type="checkbox"]{
 	margin:0;
 }
-#destinations ul.im_dest_params {
+div.im-container .destinations ul.im-dest-params {
 	padding:0;
 	float:left;
 }
-#destinations .searchTerms label {
+div.im-container .destinations .search-terms label {
 	padding: 0 1em 0 1em;
 	display: inline;
 }
-#destinations .searchTerms{
+div.im-container .destinations .search-terms{
     clear:both;
 }
 
-.mergeField {
+div.im-container .merge-field {
 	min-height: 2.2em;
 	padding: 1em 0;
 }
-.mergeField.im-required label[for]:after{
+div.im-container .merge-field.im-required label[for]:after{
 	content: '*';
 }
-.searchTerms{
+div.im-container .search-terms{
 	padding-bottom: 0.5em
 }
-.searchTerms input[type="text"]{
+div.im-container .search-terms input[type="text"]{
 	width: 75%;
 }
-.im_subrecord .im-submit, .im_subrecord h3{
+div.im-container .im-subrecord .im-submit, 
+div.im-container .im-subrecord h3{
 	display:inline-block;
 	margin-right:30px;
 }
-.im_subrecord li{
+div.im-container .im-subrecord li{
 	list-style-type:none;
 }
-.im_subrecord input[type=text][disabled]{
+div.im-container .im-subrecord input[type=text][disabled]{
 	border:none;
 	opacity:0;
 	width:1px;
 }
-#submission {
+div.im-container .im-submission-wrapper {
 	background: #C0C0C0;
 	color: #FFF;
 	border-bottom-left-radius: 0.5em;
 	border-bottom-right-radius: 0.5em;
 }
 
-.im-submit {
+div.im-container .im-submit {
 	background: #4F81BD;
 	color: #fff;
 	font-family: sans-serif;
@@ -183,13 +189,13 @@ section{
 	right: 5px;
 }
 
-#actions {
+div.im-container .im-actions {
 	clear: both;
 	text-align: right;
 	margin-right: 2%;
 }
 
-.invalid-message {
+div.im-container .invalid-message {
 	margin-left: 0.5em;
 	padding: 0.25em;
 	color: #FFF;
@@ -198,18 +204,18 @@ section{
 	font-weight: bold;
 }
 /* Preview Sidebar */
-.previewPane::-webkit-scrollbar {
+div.im-container .preview-pane::-webkit-scrollbar {
 	width:12px;
 	height:12px
 }
-.previewPane::-webkit-scrollbar-corner{
+div.im-container .preview-pane::-webkit-scrollbar-corner{
 	background-color:#4F81BB;
 }
-.previewPane::-webkit-scrollbar-thumb{
+div.im-container .preview-pane::-webkit-scrollbar-thumb{
 	border-radius:8px;
 	background-color:#CCF;
 }
-.previewPane.closed{
+div.im-container .preview-pane.closed{
 	background-color: #4F81BD;
 	color: #FFF;
 	position:fixed;
@@ -219,7 +225,7 @@ section{
 	width:4%;
 	min-width:50px;
 }
-.previewPane.closed h4 {
+div.im-container .preview-pane.closed h4 {
 	margin-top: 2em;
 	margin-bottom: 4em;
 	cursor: pointer;
@@ -227,7 +233,7 @@ section{
 	-ms-transform:rotate(-90deg); /* IE 9 */
 	-webkit-transform:rotate(-90deg); /* Safari and Chrome */
 }
-.previewPane .toggleBar{
+div.im-container .preview-pane .toggle-bar{
 	position: fixed;
 	top: 0;
 	bottom: 0;
@@ -236,46 +242,46 @@ section{
 	z-index: 99;
 	padding: 25% 0;
 }
-.previewPane .toggleBar:hover{
+div.im-container .preview-pane .toggle-bar:hover{
 	background-color:#2F61AD;
 	cursor: pointer;
 }
-.previewPane.closed .toggleBar:after{
+div.im-container .preview-pane.closed .toggle-bar:after{
 	content: '<<';
 }
-.previewPane.open .toggleBar:after{
+div.im-container .preview-pane.open .toggle-bar:after{
 	content: '>>';
 }
-.previewPane .tabs,
-.previewPane .contents{
+div.im-container .preview-pane .tabs,
+div.im-container .preview-pane .contents{
 	margin-left:25px;
 }
-.previewPane.open .tabContainer.active h4{
+div.im-container .preview-pane.open .tab-container.active h4{
 	 background-color:rgba(200,200,255,0.2)
 }
-.previewPane.closed .previewContent{
+div.im-container .preview-pane.closed .preview-content{
 	display: none;
 }
-.previewPane.open .previewContent.active{
+div.im-container .preview-pane.open .preview-content.active{
 	display: block;
 }
-.previewPane.open {
+div.im-container .preview-pane.open {
 	top:0;
 	height:100%;
 	overflow-x:scroll;
 	width:20%;
 }
-.previewPane.open.merge{
+div.im-container .preview-pane.open.merge{
 	position:fixed;
 	width:60%;
 }
-.previewPane.open.merge .previewContent{
+div.im-container .preview-pane.open.merge .preview-content{
 	height:100%;
 }
-.previewPane.open.merge .contents{
+div.im-container .preview-pane.open.merge .contents{
 	height:85%;
 }
-.previewPane.open h4 {
+div.im-container .preview-pane.open h4 {
 	cursor: pointer;
 	transform:rotate(0deg);
 	-ms-transform:rotate(0deg);
@@ -283,27 +289,28 @@ section{
 	margin: 0;
 	padding: 10px;
 }
-.previewPane .toggleOpen:before {
+div.im-container .preview-pane .toggle-open:before {
 	content:'▲';
 	margin-left: 7px;
 }
 
-.previewPane .toggleClose:before {
+div.im-container .preview-pane .toggle-close:before {
 	content:'►';
 }
-.previewPane ul.sub{
+div.im-container .preview-pane ul.sub{
     background-color:rgba(200,200,255,0.2)
 }
-.previewPane ul, .previewPane li{
+div.im-container .preview-pane ul, 
+div.im-container .preview-pane li{
 	list-style-type: none;
 	padding-left: 0;
 	margin-left:0.5em
 }
-.previewPane .previewVal{
+div.im-container .preview-pane .preview-val{
 	text-decoration: underline;
 	cursor:pointer;
 }
-#previewPaneSTOP {
+div.im-container #previewPaneSTOP {
 	background-color: red;
 	position:fixed;
 	top:0;

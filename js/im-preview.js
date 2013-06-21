@@ -15,15 +15,17 @@ function IMPreview($container, im){
 	var _this = this;
 	
 	this.init = function(){
-		var $paneTemplate = $('<div class="previewPane closed"></div>');
+		var $paneTemplate = $('<div class="preview-pane closed"></div>');
 		$mainContainer.append($paneTemplate);
-		$previewPane = $('.previewPane', $mainContainer);
+		$previewPane = $('.preview-pane', $mainContainer);
 		tabManager = new TabManager($previewPane);
 	}
 	this.onReady = function(flowId, jobId, settings){
 		tabManager.emptyTabs();
-		tabManager.addTab(previewTabs.payload);
-		this.loadPayloadData(flowId);
+		if (settings.showData == 'true'){
+			tabManager.addTab(previewTabs.payload);
+			this.loadPayloadData(flowId);
+		}
 		if (settings.previewRequested === 'true') {
 			outputUrl =  $(settings.outputProxy).attr('rf.source') + '?rf.flowId=' + flowId;
 			tabManager.addTab(previewTabs.preview);
@@ -41,7 +43,7 @@ function IMPreview($container, im){
 
 	this.formatPayloadData = function(payloadXML){
 		var payload = parsePayload(payloadXML.getElementsByTagName('data')[0]);
-		$payloadContent = $('<div class="payloadData"></div>').append(payload);
+		$payloadContent = $('<div class="payload-data"></div>').append(payload);
 		return $payloadContent;
 	}
 
@@ -176,7 +178,7 @@ function IMPreview($container, im){
 		if (!val){
 			return $('<span><em>Not supplied</em></span>');
 		} else {
-			updateLink = $('<span class="previewVal">').text(val);
+			updateLink = $('<span class="preview-val">').text(val);
 			updateLink.click(function(){
 				imInstance.updateLastActive(val);
 			});
@@ -215,13 +217,13 @@ function IMPreview($container, im){
 				'onHide' : function(){}
 			}
 		}
-		var tabContainerSelector = '.tabs .tabContainer';
-		var tabContentSelector = '.contents .previewContent';
+		var tabContainerSelector = '.tabs .tab-container';
+		var tabContentSelector = '.contents .preview-content';
 
 
 		this.init = function(){
-			$container.empty().append('<div class="toggleBar">&nbsp;</div><div class="tabs"></div><div class="contents"></div>');
-			$container.find('.toggleBar').click(function(){
+			$container.empty().append('<div class="toggle-bar">&nbsp;</div><div class="tabs"></div><div class="contents"></div>');
+			$container.find('.toggle-bar').click(function(){
 				var activeTab = getActiveTab();
 				if (!activeTab){
 					_this.toggle(tabs.payload.name);
@@ -238,10 +240,10 @@ function IMPreview($container, im){
 
 		this.addTab = function(tab){
 			var tab = tabs[tab];
-			var $tabTemplate = $('<div class="tabContainer"><h4 class="previewTab"><span class="tabText"></span><span class="toggle toggleOpen"/></h4></div>').data('group', tab.group);
-			$tabTemplate.find('.tabText').text(tab.text);
+			var $tabTemplate = $('<div class="tab-container"><h4 class="preview-tab"><span class="tab-text"></span><span class="toggle toggle-open"/></h4></div>').data('group', tab.group);
+			$tabTemplate.find('.tab-text').text(tab.text);
 
-			var $content = $('<div class="previewContent"></div>').data('group', tab.group);
+			var $content = $('<div class="preview-content"></div>').data('group', tab.group);
 
 			$tabTemplate.click(function(){
 				_this.toggle(tab.name);
@@ -311,13 +313,13 @@ function IMPreview($container, im){
 
 		this.openPanel = function(){
 			$container.addClass('open');
-			$('.previewTab .toggle', $container).addClass('toggleClose');
+			$('.preview-tab .toggle', $container).addClass('toggle-close');
 
 		}
 
 		this.closePanel = function(){
 			$container.removeClass('open');
-			$('.previewTab .toggle', $container).removeClass('toggleClose');
+			$('.preview-tab .toggle', $container).removeClass('toggle-close');
 		}
 
 		function findTabPart(group, selector){

@@ -1,21 +1,21 @@
 <form rhinoforms="true">
 	<header>
-		<h1 title="template - {{template/fileName}}">{{/merge//jobDetails//mainHeader}}<span class="subName">{{/merge//jobDetails//subHeader}}</span></h1>
+		<h1 title="template - {{template/fileName}}">{{/merge//jobDetails//mainHeader}}<span class="im-sub-text">{{/merge//jobDetails//subHeader}}</span></h1>
 		<input type="hidden" name="imDescription" rf.calculated="'{{/merge//jobDetails//mainHeader}} {{/merge//jobDetails//subHeader}}'"/>
 		<input type="hidden" name="imPreviewDescription" rf.calculated="'Preview merge of {{/merge//jobDetails//mainHeader}} {{/merge//jobDetails//subHeader}}'"/>
-		<h2 rf.includeIf="'{{$show-template}}' === 'true'">Template Requested: <span class="subName">{{template/fileName}}</span></h2>
+		<h2 rf.includeIf="'{{$show-template}}' === 'true'">Template Requested: <span class="im-sub-text">{{template/fileName}}</span></h2>
 	</header>
-	<section id="destinations" rf.includeIf="'{{$show-destinations}}' === 'true' || '{{$show-search-terms}}' === 'true'">
+	<section class="destinations" rf.includeIf="'{{$show-destinations}}' === 'true' || '{{$show-search-terms}}' === 'true'">
 		<div rf.includeIf="'{{$show-destinations}}' === 'true'">
 			<h2>Available Destinations: </h2>
-			<ul class="im_destinations">
+			<ul class="im-destinations">
 				<rf.forEach select="destinations/destination" as="d">
-					<li class="im_destination">
+					<li class="im-destination">
 						<label>{{d.@name}} <input type="checkbox" name="destinations.destination[{{d.index}}].selected" value="true" 
 							rf.initialValue="!{{$show-destinations}}"></label>
-						<ul class="im_dest_params">
+						<ul class="im-dest-params">
 							<rf.foreach select="parameter" as="p">
-								<li class="im_dest_param">
+								<li class="im-dest-param">
 									<span>{{p.@name}} - {{p}}</span>
 								</li>
 							</rf.foreach>
@@ -24,15 +24,15 @@
 				</rf.forEach>
 			</ul>
 		</div>
-		<div class="searchTerms" rf.includeIf="'{{$show-search-terms}}' === 'true'">
-			<label for="input_searchTerms">Search Terms: </label>
-			<input type="text" name="searchTerms" id="input_searchTerms" placeholder="Enter terms, separated by commas"/>
+		<div class="search-terms" rf.includeIf="'{{$show-search-terms}}' === 'true'">
+			<label for="im_input_search_terms">Search Terms: </label>
+			<input type="text" name="searchTerms" id="im_input_search_terms" placeholder="Enter terms, separated by commas"/>
 		</div>
 	</section>
-	<section id="fieldsWrapper">
+	<section class="fields-wrapper">
 		<div class="fields-container">
 			<rf.forEach select="data/record/field/*" as="f">
-				<div class="mergeField" id="fw_{{f.name()}}">
+				<div class="merge-field" id="fw_{{f.name()}}">
 					<input type="hidden" name="data.record.field.{{f.name()}}" 
 						   rf.validationFunction="validateMergeField(this, '{{f.parent::field.@mandatory}}', '{{f.parent::field.@type}}', action)"/>
 				</div>
@@ -48,13 +48,13 @@
 				</script>
 			</rf.forEach>
 			<rf.forEach select="data/record/subrecord" as="s">
-				<div class="im_subrecord">
+				<div class="im-subrecord">
 					<h3>Subrecord: {{s.@name}} {{s.index}}</h3><input type="button" class="im-submit" value="Edit" data-index="{{s.index}}">
 					<input type="submit" rf.action="subrecord?index={{s.index}}" value="Edit" style="display:none" class="edit{{s.index}}">
 					<ul>
 						<rf.forEach select="field" as="sf">
 							<li><label>{{sf.@label}}<span rf.includeif="'{{sf.@mandatory}}' == 'true'">*</span></label>
-								<span class="im_srformat" data-format="{{sf.@type}}">{{sf.child::node()}}</span>
+								<span class="im-srformat" data-format="{{sf.@type}}">{{sf.child::node()}}</span>
 								<input type="text" name="tempsubrecord.i{{sf.parent::subrecord.@index}}.{{sf.child::*.name()}}" 
 									rf.calculated="'{{sf.child::node()}}'"
 									disabled rf.validationFunction="validateMergeField(this, '{{sf.@mandatory}}', '{{sf.@type}}', action)">
@@ -65,8 +65,8 @@
 			</rf.forEach>
 		</div>
 	</section>
-	<footer id="submission">
-		<div id="actions">
+	<footer class="im-submission-wrapper">
+		<div class="im-actions">
 			<p rf.includeif="'{{previewRequested}}' == 'true'">
 				<em>Changes made after previewing will not be included in the final document unless another preview is requested</em>
 			</p>
@@ -77,28 +77,29 @@
 			<input type="submit" rf.action="preview" value="Next" style="display:none">
 			<input type="submit" rf.action="submit" value="Next" style="display:none">
 		</div>
-		<input type="hidden" name="previewRequested" id="input_prevReq"/>
+		<input type="hidden" name="previewRequested" id="input_prev_req"/>
 		<input type="hidden" name="previewJobId" rf.calculated="decodeXpathEncodedString('{{encode-for-uri(substring(/merge/previewJob,30))}}')"/>
-		<input type="hidden" name="proxy" rf.source="{{$end-point-jobs}}/{{replace(substring(/merge/previewJob,30),'\n','')}}" id="jobsProxy">
-		<input type="hidden" rf.source="{{$end-point-output}}/{{replace(substring(/merge/previewJob,30),'\n','')}}/0" id="outputProxy">
+		<input type="hidden" name="proxy" rf.source="{{$end-point-jobs}}/{{replace(substring(/merge/previewJob,30),'\n','')}}" id="im_jobs_proxy">
+		<input type="hidden" rf.source="{{$end-point-output}}/{{replace(substring(/merge/previewJob,30),'\n','')}}/0" id="im_output_proxy">
 	</footer>
 	<script>
 		rf.onFormLoad(function(){
 			var previewSettings = {
+				'showData' : '{{$show-data-tab}}',
 				'previewRequested' : '{{previewRequested}}',
 				'pollInterval' : '{{$preview-poll-frequency}}',
-				'jobsProxy' : '#jobsProxy',
-				'outputProxy' : '#outputProxy',
+				'jobsProxy' : '#im_jobs_proxy',
+				'outputProxy' : '#im_output_proxy',
 				'previewResponse' : decodeXpathEncodedString('{{encode-for-uri(/merge/previewJob)}}')
 
 			}
 			merge_preview.onReady('{{$rf.flowId}}', {{/merge/jobDetails//id}}, previewSettings);
 			interactive_merge.onReady();
-			interactive_merge.formatOutputs('.im_srformat', '.fields-container');
+			interactive_merge.formatOutputs('.im-srformat', '.fields-container');
 
 			// update rich text field rf counterparts before submitting
 			$('input[type="button"].im-submit').click(function(){
-				if(!interactive_merge.hasDestinationSelected('.im_destination input[type=checkbox]') && $(this).val() !== 'Edit'){
+				if(!interactive_merge.hasDestinationSelected('.im-destination input[type=checkbox]') && $(this).val() !== 'Edit'){
 					alert('Please select at least one destination');
 					return;
 				}

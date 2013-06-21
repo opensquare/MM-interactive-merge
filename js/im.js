@@ -289,7 +289,7 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 	}
 
 	var richTextControl = function(field){
-		var $label = createLabel(field.label, field.id).addClass('rteLabel');
+		var $label = createLabel(field.label, field.id).addClass('im-rte-label');
 		var $textarea = $('<textarea></textarea>').attr('name', field.name).attr('id', field.id).val(field.value);
 
 		// add some useful parameters to retrieve and update the associated rf field and rtEditor 

@@ -10,6 +10,7 @@
 						submission: {
 								url: "{{$end-point-jobs-xml}}/{{//merge/jobId}}",
 								method: "get",
+								messageOnHttpError: "Problem encountered while retrieving job data",
 								resultInsertPoint: "/merge/jobDetails"
 						}
 					}
@@ -27,16 +28,18 @@
 								url: "{{$end-point-jobs}}/{{//merge/jobId}}/payload",
 								method: "get",
 								resultInsertPoint: "/merge/payload",
+								messageOnHttpError: "Problem encountered while retrieving job data",
 								postTransform: "xslt/removeNamespaces.xsl"
 							},
 							{
 								url: "{{$end-point-templates}}/{{//mmJob//template/fileName}}/fieldsXML",
 								method: "get",
 								resultInsertPoint: "/merge/templates/next",
+								messageOnHttpError: "Problem encountered while retrieving job data",
 								postTransform: "xslt/ifl.xsl"
 							},
 							{
-								url: "http://localhost:8080{{$contextPath}}/echo",
+								url: "{{$appPath}}/echo",
 								method: "post",
 								data: {
 									echoData: "[dataDocument]",
@@ -57,7 +60,7 @@
 						target: "interactiveMerge",
 						submissions: [
 							{
-								url: "http://localhost:8080{{$contextPath}}/echo",
+								url: "{{$appPath}}/echo",
 								method: "post",
 								data: {
 									echoData: "[dataDocument]",
@@ -67,7 +70,7 @@
 								resultInsertPoint: "/"
 							},
 							{
-								url: "http://localhost:8080{{$contextPath}}/echo",
+								url: "{{$appPath}}/echo",
 								method: "post",
 								data: {
 									echoData: "[dataDocument]",
@@ -86,10 +89,11 @@
 								url: "{{$end-point-templates}}/{{//nextTemplate/file}}/fieldsXML",
 								method: "get",
 								resultInsertPoint: "/merge/templates/next",
+								messageOnHttpError: "Problem encountered while retrieving job data",
 								postTransform: "xslt/ifl.xsl"
 							},
 							{
-								url: "http://localhost:8080{{$contextPath}}/echo",
+								url: "{{$appPath}}/echo",
 								method: "post",
 								data: {
 									echoData: "[dataDocument]",
@@ -124,6 +128,7 @@
 								jobType: "MERGE",
 								payload: "[dataDocument]"
 							},
+							messageOnHttpError: "Problem encountered while previewing job",
 							resultInsertPoint: "/merge/previewJob"
 						}
 					},
@@ -149,6 +154,7 @@
 								jobType: "COMBINED",
 								payload: "[dataDocument]"
 							},
+							messageOnHttpError: "Problem encountered while submitting job",
 							resultInsertPoint: "/merge/submitResult"
 						}
 					},
@@ -166,6 +172,7 @@
 								jobType: "DELIVERY",
 								payload: "[dataDocument]"
 							},
+							messageOnHttpError: "Problem encountered while submitting job",
 							resultInsertPoint: "/merge/submitResult"
 						}
 					}
