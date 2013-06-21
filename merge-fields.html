@@ -67,9 +67,6 @@
 	</section>
 	<footer class="im-submission-wrapper">
 		<div class="im-actions">
-			<p rf.includeif="'{{previewRequested}}' == 'true'">
-				<em>Changes made after previewing will not be included in the final document unless another preview is requested</em>
-			</p>
 			<input type="button" value="Cancel" class="im-submit" rf.includeif="'{{$cancel-redirect}}' != '{' + '{$cancel-redirect}}' && '{{$cancel-redirect}}' != ''"/>
 			<input type="button" value="Preview" class="im-submit" rf.includeIf="'{{$allow-preview}}' === 'true'"/>
 			<input type="button" value="Submit" class="im-submit"/>
@@ -78,6 +75,7 @@
 			<input type="submit" rf.action="submit" value="Next" style="display:none">
 		</div>
 		<input type="hidden" name="previewRequested" id="input_prev_req"/>
+		<input type="hidden" name="dataChanged" id="input_data_changed"/>
 		<input type="hidden" name="previewJobId" rf.calculated="decodeXpathEncodedString('{{encode-for-uri(substring(/merge/previewJob,30))}}')"/>
 		<input type="hidden" name="proxy" rf.source="{{$end-point-jobs}}/{{replace(substring(/merge/previewJob,30),'\n','')}}" id="im_jobs_proxy">
 		<input type="hidden" rf.source="{{$end-point-output}}/{{replace(substring(/merge/previewJob,30),'\n','')}}/0" id="im_output_proxy">
@@ -94,7 +92,7 @@
 
 			}
 			merge_preview.onReady('{{$rf.flowId}}', {{/merge/jobDetails//id}}, previewSettings);
-			interactive_merge.onReady();
+			interactive_merge.onReady('#input_data_changed');
 			interactive_merge.formatOutputs('.im-srformat', '.fields-container');
 
 			// update rich text field rf counterparts before submitting
@@ -113,6 +111,7 @@
 					case 'Preview':
 						if ('{{$allow-preview}}' === 'true'){
 							$('#input_prev_req').val('true');
+							$('#input_data_changed').val('false');
 							$('input[rf\\.action=preview]').click();
 							console.debug('Previewing merge');
 						}
@@ -126,6 +125,7 @@
 					case 'Edit':
 						var selector = 'input[rf\\.action].edit' + $(this).data('index'); + ']';
 						$('#input_prev_req').val('false');
+						interactive_merge.dataChanged();
 						console.debug('Editing subrecord: ' + $(this).data('index'));
 						$(selector).click();
 						break;

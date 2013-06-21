@@ -12,6 +12,7 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 	var flow = flow;
 	var flowLoaded = false;
 	var imContainer = $(IMcontainer);
+	var dataChangedInput
 	var _this = this;
 
 	this.init = function(){
@@ -39,8 +40,9 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		}
 	}
 
-	this.onReady = function(){
+	this.onReady = function(dataChangedSelector){
 		// initialise CKEditor RTE for each IM textarea field
+		dataChangedInput = $(dataChangedSelector);
 		this.loadRTEs();
 	}
 
@@ -57,6 +59,10 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 					break;
 			}
 		})
+	}
+
+	this.hasUnrecordedChanges = function(){
+		return dataChangedInput.val() == 'true';
 	}
 	
 	this.createControl = function($container, fieldData){
@@ -106,6 +112,12 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		return dIsSelected;
 	}
 
+	this.dataChanged = function(){
+		if (dataChangedInput){
+			dataChangedInput.val('true');
+		}
+	}
+
 	// private methods 
 	function isValidId(str){
 		var pattern = /^#[0-9]+$/g;
@@ -116,6 +128,7 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		var initialData = '<merge><jobId>' + id + '</jobId></merge>';
 		rf.loadFlow(flow, $container, initialData);
 	}
+
 
 	var verifyFieldData = function(fieldData, $container){
 		var field = {};
@@ -173,6 +186,13 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		return {build : build};
 	}
 
+	var onInputChanged = function($input, callback){
+		$input.change(function(){
+			callback(this);
+			_this.dataChanged();
+		})
+	}
+
 	var createLabel = function(value, inputId) {
 		if (inputId){
 			return $('<label>').attr("for", inputId).text(value);
@@ -198,9 +218,9 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 
 		// bind change to equivalent rhinoforms hidden field
 		if (!skipInputBind){
-			$input.change(function(){
+			onInputChanged($input, function(input){
 				var rfName = field.name.replace('.im', '');
-				$('input[name="'+ rfName + '"]').val($(this).val().replace(/\'/g, "\\'"));
+				$('input[name="'+ rfName + '"]').val($(input).val().replace(/\'/g, "\\'"));
 			});
 		}
 		
@@ -231,11 +251,11 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 			$input.prop("checked", true);
 		}
 		// bind input to rhinoforms hidden input
-		$input.change(function(){
+		onInputChanged($input, function(input){
 			var rfName = field.name.replace('.im', '');
 			var $rfInput = $('input[name="'+ rfName + '"]');
-			if ($(this).is(':checked')){
-				$rfInput.val($(this).val());
+			if ($(input).is(':checked')){
+				$rfInput.val($(input).val());
 			} else {
 				$rfInput.val(booleanFalse);
 			}
@@ -277,14 +297,15 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		
 		var $dateInput = createSimpleInput(dateField, "date", "date({format:'YYYY-MM-DD'})", true);
 		var $timeInput = createSimpleInput(timeField, "text", "date({format:'HH:mm:ss'})", true).addClass('time');
-		var callback = function(){
+		var callback = function(input){
 			var rfName = field.name.replace('.im', '');
 			$('input[name="'+ rfName + '"]').val($dateInput.val() + 'T' + $timeInput.val());
 		}
-		$dateInput.change(callback);
-		$timeInput.change(callback);
+		
+		onInputChanged($dateInput, callback);
+		onInputChanged($timeInput, callback);
 		// trigger a set value in case format is orignally incorrect
-		$dateInput.change();
+		callback();
 		return [$label, $dateInput, $timeInput];
 	}
 
@@ -296,9 +317,9 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		field.editorName = rteManager.getRTEName(field.id);
 		field.rfName = field.name.replace('.im', '');
 
-		$textarea.change(function(){
-			$('input[name="'+ field.rfName + '"]').val($(this).val().replace(/(\r\n|\n|\r)/gm,"").replace(/\'/g, "\\'"));
-		})
+		onInputChanged($textarea,function(input){
+			$('input[name="'+ field.rfName + '"]').val($(input).val().replace(/(\r\n|\n|\r)/gm,"").replace(/\'/g, "\\'"));
+		});
 
 		// add to rtEditor field list ready for load
 		rtEditors.push(field);
@@ -310,11 +331,11 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		// disabled for now
 		var $input = $('<input type="checkbox">').attr('name', field.name).val(field.value).prop('checked', true).prop('disabled',true).css('opacity', '0.7');
 		var $inputLabel = createLabel(field.value, field.id).css('opacity', '0.7');
-		$input.change(function(){
+		onInputChanged($input, function(input){
 			var rfName = field.name.replace('.im', '');
 			var $rfInput = $('input[name="'+ rfName + '"]');
-			if ($(this).is(':checked')){
-				$rfInput.val($(this).val());
+			if ($(input).is(':checked')){
+				$rfInput.val($(input).val());
 			} else {
 				$rfInput.val('');
 			}
