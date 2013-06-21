@@ -87,7 +87,7 @@ div.im-container .rf-included-false{
 .rhinoforms-merge-container {
 	border: 2px solid #4F81BD;
 	border-radius: 15px;
-	padding: 1%;
+	padding: 0.5%;
 	margin-left: 7.5%;
 	width: 80%;
 	min-width:900px;
@@ -108,9 +108,10 @@ div.im-container .destinations {
 }
 div.im-container .destinations ul.im-destinations, 
 div.im-container .destinations h2 {
-	padding: 1%;
+	padding: 0.5%;
 	float:left;
 	margin-top:0;
+	margin-bottom: 5px;
 }
 div.im-container .destinations ul.im-destinations{
 	width:65%;
@@ -146,7 +147,7 @@ div.im-container .destinations .search-terms{
 
 div.im-container .merge-field {
 	min-height: 2.2em;
-	padding: 1em 0;
+	padding: 0.5em 0;
 }
 div.im-container .merge-field.im-required label[for]:after{
 	content: '*';

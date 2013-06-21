@@ -112,7 +112,7 @@
 						break;
 					case 'Preview':
 						if ('{{$allow-preview}}' === 'true'){
-							$('#input_prevReq').val('true');
+							$('#input_prev_req').val('true');
 							$('input[rf\\.action=preview]').click();
 							console.debug('Previewing merge');
 						}
@@ -125,7 +125,7 @@
 						break;
 					case 'Edit':
 						var selector = 'input[rf\\.action].edit' + $(this).data('index'); + ']';
-						$('#input_prevReq').val('false');
+						$('#input_prev_req').val('false');
 						console.debug('Editing subrecord: ' + $(this).data('index'));
 						$(selector).click();
 						break;
