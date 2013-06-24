@@ -3,16 +3,16 @@
 		<h1 title="template - {{template/fileName}}">{{/merge//jobDetails//mainHeader}}<span class="im-sub-text">{{/merge//jobDetails//subHeader}}</span></h1>
 		<input type="hidden" name="imDescription" rf.calculated="'{{/merge//jobDetails//mainHeader}} {{/merge//jobDetails//subHeader}}'"/>
 		<input type="hidden" name="imPreviewDescription" rf.calculated="'Preview merge of {{/merge//jobDetails//mainHeader}} {{/merge//jobDetails//subHeader}}'"/>
-		<h2 rf.includeIf="'{{$show-template}}' === 'true'">Template Requested: <span class="im-sub-text">{{template/fileName}}</span></h2>
+		<h2 rf.includeIf="'{{$ui-show-template}}' === 'true'">Template Requested: <span class="im-sub-text">{{template/fileName}}</span></h2>
 	</header>
-	<section class="destinations" rf.includeIf="'{{$show-destinations}}' === 'true' || '{{$show-search-terms}}' === 'true'">
-		<div rf.includeIf="'{{$show-destinations}}' === 'true'">
+	<section class="destinations" rf.includeIf="'{{$ui-show-destinations}}' === 'true' || '{{$ui-show-search-terms}}' === 'true'">
+		<div rf.includeIf="'{{$ui-show-destinations}}' === 'true'">
 			<h2>Available Destinations: </h2>
 			<ul class="im-destinations">
 				<rf.forEach select="destinations/destination" as="d">
 					<li class="im-destination">
 						<label>{{d.@name}} <input type="checkbox" name="destinations.destination[{{d.index}}].selected" value="true" 
-							rf.initialValue="!{{$show-destinations}}"></label>
+							rf.initialValue="!{{$ui-show-destinations}}"></label>
 						<ul class="im-dest-params">
 							<rf.foreach select="parameter" as="p">
 								<li class="im-dest-param">
@@ -24,7 +24,7 @@
 				</rf.forEach>
 			</ul>
 		</div>
-		<div class="search-terms" rf.includeIf="'{{$show-search-terms}}' === 'true'">
+		<div class="search-terms" rf.includeIf="'{{$ui-show-search-terms}}' === 'true'">
 			<label for="im_input_search_terms">Search Terms: </label>
 			<input type="text" name="searchTerms" id="im_input_search_terms" placeholder="Enter terms, separated by commas"/>
 		</div>
@@ -68,8 +68,8 @@
 	</section>
 	<footer class="im-submission-wrapper">
 		<div class="im-actions">
-			<input type="button" value="Cancel" class="im-submit" rf.includeif="'{{$cancel-redirect}}' != '{' + '{$cancel-redirect}}' && '{{$cancel-redirect}}' != ''"/>
-			<input type="button" value="Preview" class="im-submit" rf.includeIf="'{{$allow-preview}}' === 'true'"/>
+			<input type="button" value="Cancel" class="im-submit" rf.includeif="'{{$redirect-cancel}}' != '{' + '{$redirect-cancel}}' && '{{$redirect-cancel}}' != ''"/>
+			<input type="button" value="Preview" class="im-submit" rf.includeIf="'{{$ui-allow-preview}}' === 'true'"/>
 			<input type="button" value="Submit" class="im-submit"/>
 			<input type="submit" rf.action="reload" value="Next" style="display:none">
 			<input type="submit" rf.action="preview" value="Next" style="display:none">
@@ -84,9 +84,9 @@
 	<script>
 		rf.onFormLoad(function(){
 			var previewSettings = {
-				'showData' : '{{$show-data-tab}}',
+				'showData' : '{{$ui-show-data-tab}}',
 				'previewRequested' : '{{previewRequested}}',
-				'pollInterval' : '{{$preview-poll-frequency}}',
+				'pollInterval' : '{{$ui-preview-poll-frequency}}',
 				'jobsProxy' : '#im_jobs_proxy',
 				'outputProxy' : '#im_output_proxy',
 				'previewResponse' : decodeXpathEncodedString('{{encode-for-uri(/merge/previewJob)}}')
@@ -110,7 +110,7 @@
 						console.debug('Submitting merge');
 						break;
 					case 'Preview':
-						if ('{{$allow-preview}}' === 'true'){
+						if ('{{$ui-allow-preview}}' === 'true'){
 							$('#input_prev_req').val('true');
 							$('#input_data_changed').val('false');
 							$('input[rf\\.action=preview]').click();
@@ -120,7 +120,7 @@
 					case 'Cancel':
 						var c = confirm('Are you sure you wish to cancel?');
 						if (c){
-							window.location.replace('{{$cancel-redirect}}');
+							window.location.replace('{{$redirect-cancel}}');
 						}
 						break;
 					case 'Edit':

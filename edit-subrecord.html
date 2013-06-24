@@ -3,7 +3,7 @@
 		<h1 title="template - {{/merge//template/fileName}}">{{/merge//jobDetails//mainHeader}}<span class="im-sub-text">{{/merge//jobDetails//subHeader}}</span></h1>
 		<input type="hidden" name="imDescription" rf.calculated="'{{/merge//jobDetails//mainHeader}} {{/merge//jobDetails//subHeader}}'"/>
 		<input type="hidden" name="imPreviewDescription" rf.calculated="'Preview merge of {{/merge//jobDetails//mainHeader}} {{/merge//jobDetails//subHeader}}'"/>
-		<h2 rf.includeIf="'{{$show-template}}' === 'true'">Template Requested: <span class="im-sub-text">{{/merge//template/fileName}}</span></h2>
+		<h2 rf.includeIf="'{{$ui-show-template}}' === 'true'">Template Requested: <span class="im-sub-text">{{/merge//template/fileName}}</span></h2>
 	</header>
 	<section class="destinations">
 		<h2>Subrecord - {{@name}}</h2>
@@ -40,7 +40,7 @@
 	<script>
 		rf.onFormLoad(function(){
 			var previewSettings = {
-				'showData' : '{{$show-data-tab}}',
+				'showData' : '{{$ui-show-data-tab}}',
 				'previewRequested' : 'false',
 				'pollInterval' : '99999',
 				'jobsProxy' : '#jobsProxy',
