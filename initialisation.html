@@ -11,7 +11,7 @@
 </form>
 <script>
 	rf.onFormLoad(function(){
-
+		interactive_merge.setBooleanValues('{{$controls-boolean-true}}', '{{$controls-boolean-false}}');
 		$('[rf\\.action=next]', '.rhinoforms-merge-container').click();
 		$('[rf\\.action=iflFields]', '.rhinoforms-merge-container').click();
 	})

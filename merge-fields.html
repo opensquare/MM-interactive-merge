@@ -43,6 +43,7 @@
 						label: '{{f.parent::field.@label}}',
 						type: '{{f.parent::field.@type}}',
 						mandatory: '{{f.parent::field.@mandatory}}',
+						format: '{{f.parent::field.@format}}',
 						value: '{{f}}'
 					});
 				</script>
@@ -54,9 +55,9 @@
 					<ul>
 						<rf.forEach select="field" as="sf">
 							<li><label>{{sf.@label}}<span rf.includeif="'{{sf.@mandatory}}' == 'true'">*</span></label>
-								<span class="im-srformat" data-format="{{sf.@type}}">{{sf.child::node()}}</span>
+								<span class="im-srformat" data-format="{{sf.@type}}">{{sf.child::*.text()}}</span>
 								<input type="text" name="tempsubrecord.i{{sf.parent::subrecord.@index}}.{{sf.child::*.name()}}" 
-									rf.calculated="'{{sf.child::node()}}'"
+									rf.calculated="'{{sf.child::*.text()}}'"
 									disabled rf.validationFunction="validateMergeField(this, '{{sf.@mandatory}}', '{{sf.@type}}', action)">
 								</li>
 						</rf.forEach>

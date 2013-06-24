@@ -2,7 +2,8 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 	
 	var controls,
 	rtEditors,
-	lastActiveInput;
+	lastActiveInput,
+	boolControlValues;
 
 	var rteManager = new RTEManager(RTEConfig);
 
@@ -12,7 +13,7 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 	var flow = flow;
 	var flowLoaded = false;
 	var imContainer = $(IMcontainer);
-	var dataChangedInput
+	var dataChangedInput;
 	var _this = this;
 
 	this.init = function(){
@@ -59,6 +60,12 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 					break;
 			}
 		})
+	}
+	this.setBooleanValues = function(boolTrue, boolFalse){
+		boolControlValues = {
+			't' : boolTrue,
+			'f' : boolFalse
+		}
 	}
 
 	this.hasUnrecordedChanges = function(){
@@ -150,6 +157,7 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		
 		field.inputType = (fieldData.hasOwnProperty('type')) ? fieldData.type : "text";
 		field.value = (fieldData.hasOwnProperty('value')) ? fieldData.value : "";
+		field.format = (fieldData.hasOwnProperty('format')) ? fieldData.format : "";
 		field.mandatory = fieldData.mandatory == 'true';
 		
 		return field;
@@ -242,16 +250,26 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 
 	var booleanControl = function(field){
 		// default values for check boxes
-		var booleanTrue = "Yes",
-		booleanFalse = "No";
+		var defaultBooleanTrue = "Yes",
+		defaultBooleanFalse = "No";
+
+		var booleanTrue = defaultBooleanTrue, booleanFalse = defaultBooleanFalse;
+		if(field.format != '' && field.format.split('/').length == 2){
+			var formats = field.format.split('/');
+			booleanTrue = formats[0];
+			booleanFalse = formats[1];
+		} else if(boolControlValues){
+			booleanTrue = boolControlValues.t;
+			booleanFalse = boolControlValues.f;
+		}
+		
 		
 		var $label = createLabel(field.label);
 		var $input = $('<input type="checkbox">').attr('name', field.name).attr('id',field.id).val(booleanTrue);
 		if (field.value == booleanTrue){
 			$input.prop("checked", true);
 		}
-		// bind input to rhinoforms hidden input
-		onInputChanged($input, function(input){
+		var inputCallback = function(input){
 			var rfName = field.name.replace('.im', '');
 			var $rfInput = $('input[name="'+ rfName + '"]');
 			if ($(input).is(':checked')){
@@ -259,7 +277,11 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 			} else {
 				$rfInput.val(booleanFalse);
 			}
-		});
+		}
+		// set first value
+		inputCallback($input);
+		// bind input to rhinoforms hidden input
+		onInputChanged($input, inputCallback);
 		var $inputLabel = createLabel(booleanTrue, field.id);
 		return [$label, $input, $inputLabel];
 	}
