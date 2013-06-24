@@ -1,4 +1,20 @@
-<form rhinoforms="true">
-	<h2>Unable to initialise Interactive Merge</h2>
-	<p>{{$invalid-job-message}}</p>
+<form rhinoforms="true" style="display:none">
+	<header>
+		<h1>Interactive Merge</h1>
+	</header>
+	<section>
+		<h2>Unable to initialise Interactive Merge</h2>
+		<p>{{$invalid-job-message}}</p>
+	</section>
+	<script>
+		rf.onFormLoad(function(){
+			// build empty property comparison string to avoid rf value injection
+			var invalidRedirectPlaceholder = '{' + '{$redirect-invalid-job}}';
+			if ('{{$redirect-invalid-job}}' != invalidRedirectPlaceholder){
+				window.location.replace('{{$redirect-invalid-job}}');
+			} else {
+				$('.merge-content form').show();
+			}
+		})
+	</script>
 </form>

@@ -6,13 +6,16 @@
 		<input type="hidden" name="header.main" rf.calculated="'{{$merge-header}}'">
 		<input type="hidden" name="header.sub" rf.calculated="'{{$merge-sub-header}}'">
 		<input type="submit" rf.action="next" style="display:none;"/>
-		<input type="button" rf.action="iflFields" style="display:none;"/>
+		<input type="submit" rf.action="invalid" style="display:none;"/>
 	</section>
 </form>
 <script>
 	rf.onFormLoad(function(){
-		interactive_merge.setBooleanValues('{{$controls-boolean-true}}', '{{$controls-boolean-false}}');
-		$('[rf\\.action=next]', '.rhinoforms-merge-container').click();
-		$('[rf\\.action=iflFields]', '.rhinoforms-merge-container').click();
+		if('{{/merge/jobId}}' !== 'INVALID'){
+			interactive_merge.setBooleanValues('{{$controls-boolean-true}}', '{{$controls-boolean-false}}');
+			$('[rf\\.action=next]', '.rhinoforms-merge-container').click();
+		} else {
+			$('[rf\\.action=invalid]', '.rhinoforms-merge-container').click();
+		}
 	})
 </script>

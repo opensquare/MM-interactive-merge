@@ -7,9 +7,6 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 
 	var rteManager = new RTEManager(RTEConfig);
 
-	var invalidJobMessage = '<h2>Unable to initialise Interactive Merge</h2>\n\
-		<p>A valid job ID has not been specified</p>';
-
 	var flow = flow;
 	var flowLoaded = false;
 	var imContainer = $(IMcontainer);
@@ -31,12 +28,8 @@ function InteractiveMerge(IMcontainer, flow, RTEConfig){
 		if (!flowLoaded){
 			var hashtag = window.location.hash;
 			console.debug('hashtag: ' + hashtag);
-			if (isValidId(hashtag)) {
-				hashtag = hashtag.substr(1);
-				loadMergeFlow(hashtag, imContainer);
-			} else {
-				imContainer.html(invalidJobMessage);
-			}
+			hashtag = isValidId(hashtag) ? hashtag.substr(1) : 'INVALID';
+			loadMergeFlow(hashtag, imContainer);
 			flowLoaded = true;
 		}
 	}

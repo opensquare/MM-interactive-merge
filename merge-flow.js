@@ -13,7 +13,8 @@
 								messageOnHttpError: "Problem encountered while retrieving job data",
 								resultInsertPoint: "/merge/jobDetails"
 						}
-					}
+					},
+					"invalid:invalidJob"
 				]
 			},
 			{id: "jobValidity", url: "check-job-validity.html", docBase:"/merge/jobDetails/job", 
